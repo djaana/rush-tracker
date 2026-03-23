@@ -37,6 +37,13 @@ export default class ContextMenu {
         this.#el.style.left = `${e.clientX}px`;
         this.#el.style.top  = `${e.clientY}px`;
         this.#el.classList.add('open');
+
+        const rect = this.#el.getBoundingClientRect();
+        const x = Math.min(e.clientX, window.innerWidth  - rect.width  - 4);
+        const y = Math.min(e.clientY, window.innerHeight - rect.height - 4);
+
+        this.#el.style.left = `${Math.max(4, x)}px`;
+        this.#el.style.top  = `${Math.max(4, y)}px`;
     };
 
     hide() {
