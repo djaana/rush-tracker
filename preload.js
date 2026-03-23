@@ -8,5 +8,7 @@ contextBridge.exposeInMainWorld('api', {
     deleteGame:    (id) => ipcRenderer.send('game:delete', id),
     minimize:      () => ipcRenderer.send('window:minimize'),
     close:         () => ipcRenderer.send('window:close'),
-    fetchPlayer:   (username) => ipcRenderer.invoke('player:fetch', username)
+    fetchPlayer:   (username) => ipcRenderer.invoke('player:fetch', username),
+    simStart:      () => ipcRenderer.send('sim:start'),
+    simStop:       () => ipcRenderer.send('sim:stop')
 });

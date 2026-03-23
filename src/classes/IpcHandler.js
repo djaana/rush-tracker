@@ -1,6 +1,6 @@
 const { ipcMain, shell, app } = require('electron');
 
-const https                   = require('https');
+const https = require('https');
 
 module.exports = class IpcHandler {
     constructor(getWindow, handler, sendUpdate, store) {
@@ -10,6 +10,8 @@ module.exports = class IpcHandler {
         this.store      = store;
 
         this.#register();
+
+        if (!app.isPackaged) this.#registerDev();
     };
 
     #fetchPlayer(username) {
@@ -62,5 +64,13 @@ module.exports = class IpcHandler {
         });
 
         ipcMain.handle('player:fetch', (_e, username) => this.#fetchPlayer(username).catch(() => null));
+    };
+ 
+    #registerDev() {
+        const Simulator = require('../../tests/Simulator');
+        const sim       = new Simulator(this.handler, this.sendUpdate);
+ 
+        ipcMain.on('sim:start', () => sim.start());
+        ipcMain.on('sim:stop',  () => sim.stop());
     };
 };
