@@ -1,3 +1,13 @@
+@keyframes card-enter {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes card-exit {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-4px); }
+}
+
 .history {
     width: 260px;
     flex-shrink: 0;
@@ -33,6 +43,9 @@
 .card.current  { border-color: #444; }
 .card.current.selected { border-color: #666; }
 
+.card-enter { animation: card-enter 180ms ease both; }
+.card-exit  { animation: card-exit  150ms ease both; pointer-events: none; }
+
 .card-top {
     display: flex;
     align-items: center;
@@ -63,7 +76,7 @@
 
 .card-sub       { font-size: 11px; color: var(--text-dim); }
 .card-sub.green { color: #6bcb77; }
-.card-sub.blue { color: #6b85cb; }
+.card-sub.blue  { color: #6b85cb; }
 .card-sub.red   { color: #e05a5a; }
 .card-sub.muted { color: var(--text-muted); }
 .card-time      { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }

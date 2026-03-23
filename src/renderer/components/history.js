@@ -2,84 +2,149 @@ import { formatDate } from './utils.js';
 
 export default class History {
     #el;
+    #cards   = new Map();
+    #isFirst = true;
 
     constructor(onSelect, onContextMenu) {
         this.#el = document.getElementById('history-cards');
 
         this.#el.addEventListener('click', (e) => {
             const card = e.target.closest('.card');
-            if (!card) return;
 
+            if (!card) return;
+            
             const id = card.dataset.id;
+
             onSelect(id === 'current' ? 'current' : Number(id));
         });
 
         this.#el.addEventListener('contextmenu', (e) => {
             const card = e.target.closest('.card');
+
             if (!card) return;
 
             const id = card.dataset.id;
+
             onContextMenu(e, id === 'current' ? 'current' : Number(id));
         });
     };
 
-    render(game, games, viewingGameId) {
-        let html = '';
+    #buildCurrentCard(game) {
+        const el = document.createElement('div');
 
-        if (game.started) {
-            html += `
-                <div class="card current ${viewingGameId === null ? 'selected' : ''}" data-id="current">
-                    <div class="card-top">
-                        <span class="card-title">${game.mode?.label || '—'}</span>
-                        <span class="badge yellow">en cours</span>
-                    </div>
-                </div>
-            `;
+        el.dataset.id = 'current';
+        el.innerHTML = `
+            <div class="card-top">
+                <span class="card-title">${game.mode?.label || '—'}</span>
+                <span class="badge yellow">en cours</span>
+            </div>
+        `;
+
+        return el;
+    };
+
+    #buildCard(g) {
+        const el = document.createElement('div');
+        el.dataset.id = String(g.id);
+
+        const modeLabel = g.mode?.label || '—';
+        let resultLabel, resultClass;
+
+        if (g.spectator) {
+            const labels = { blue: 'bleu', red: 'rouge' };
+
+            resultLabel  = labels[g.winner] || '—';
+            resultClass  = g.winner         || 'muted';
+        } else {
+            const labels  = { win: 'victoire', loose: 'défaite', draw: 'égalité' };
+            const classes = { win: 'green', loose: 'red' };
+
+            resultLabel = labels[g.state]  || 'inconnu';
+            resultClass = classes[g.state] || 'muted';
         };
 
-        for (const g of games) {
-            const modeLabel = g.mode?.label || '—';
-            
-            let resultLabel;
-            let resultClass;
+        el.innerHTML = `
+            <div class="card-top">
+                <span class="card-title">${modeLabel}</span>
+                <span class="card-date">${formatDate(g.id)}</span>
+            </div>
+            <div class="card-bottom">
+                <span class="card-sub ${resultClass}">${resultLabel}</span>
+                <span class="card-time">${g.duration || '—'}</span>
+            </div>
+        `;
 
-            if (g.spectator) {
-                const resultLabels = {
-                    blue: 'bleu',
-                    red: 'rouge'
-                };
+        return el;
+    };
 
-                resultLabel = resultLabels[g.winner] || '—';
-                resultClass = g.winner               || 'muted';
-            } else {
-                const resultLabels = {
-                    win: 'victoire',
-                    loose: 'défaite',
-                    draw: 'égalité'
-                };
-                const resultClasses = {
-                    win: 'green',
-                    loose: 'red'
-                };
+    #setClass(el, id, viewingGameId) {
+        if (id === 'current') {
+            el.className = `card current${viewingGameId === null ? ' selected' : ''}`;
+        } else {
+            el.className = `card${viewingGameId === Number(id) ? ' selected' : ''}`;
+        };
+    };
 
-                resultLabel = resultLabels[g.state]  || 'inconnu';
-                resultClass = resultClasses[g.state] || 'muted';
+    render(game, games, viewingGameId) {
+        const isFirst = this.#isFirst;
+        this.#isFirst = false;
+
+        const incoming = new Map();
+        if (game.started) incoming.set('current', game);
+
+        for (const g of games) incoming.set(String(g.id), g);
+
+        for (const [id, el] of [...this.#cards]) {
+            if (!incoming.has(id)) {
+                this.#cards.delete(id);
+                el.classList.add('card-exit');
+                el.addEventListener('animationend', () => el.remove(), { once: true });
             };
+        };
 
-            html += `
-                <div class="card ${viewingGameId === g.id ? 'selected' : ''}" data-id="${g.id}">
-                    <div class="card-top">
-                        <span class="card-title">${modeLabel}</span>
-                        <span class="card-date">${formatDate(g.id)}</span>
-                    </div>
-                    <div class="card-bottom">
-                        <span class="card-sub ${resultClass}">${resultLabel}</span>
-                        <span class="card-time">${g.duration || '—'}</span>
-                    </div>
-                </div>
-            `;
-        }
+        this.#el.querySelector('.history-empty')?.remove();
 
-        this.#el.innerHTML = html || '<div class="history-empty">aucune partie enregistrée</div>';
+        const incomingKeys = [...incoming.keys()];
+        let newIdx = 0;
+
+        for (let i = 0; i < incomingKeys.length; i++) {
+            const id   = incomingKeys[i];
+            const data = incoming.get(id);
+
+            if (this.#cards.has(id)) {
+                this.#setClass(this.#cards.get(id), id, viewingGameId);
+            } else {
+                const el = id === 'current' ? this.#buildCurrentCard(data) : this.#buildCard(data);
+
+                this.#setClass(el, id, viewingGameId);
+                el.classList.add('card-enter');
+
+                if (isFirst) el.style.animationDelay = `${newIdx * 40}ms`;
+
+                let anchor = null;
+                for (let j = i + 1; j < incomingKeys.length; j++) {
+                    const next = this.#cards.get(incomingKeys[j]);
+                    if (next) {
+                        anchor = next;
+                        
+                        break;
+                    };
+                };
+
+                anchor ? this.#el.insertBefore(el, anchor) : this.#el.appendChild(el);
+
+                this.#cards.set(id, el);
+
+                newIdx++;
+            };
+        };
+
+        if (!incoming.size) {
+            const empty = document.createElement('div');
+            empty.className = 'history-empty';
+            empty.textContent = 'aucune partie enregistrée';
+            
+            this.#el.appendChild(empty);
+        };
     };
 };

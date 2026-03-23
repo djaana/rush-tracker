@@ -41,10 +41,10 @@ function refresh() {
     const { game, self, games } = lastData;
 
     if (viewingGameId === null) {
-        players.render(game.players, self);
+        players.render(game.players, self, false);
     } else {
         const saved = (games || []).find((g) => g.id === viewingGameId);
-        if (saved) players.render(saved.players.map((p) => ({ ...p, connection: true })), null);
+        if (saved) players.render(saved.players.map((p) => ({ ...p, connection: true })), null, true);
     };
 
     history.render(game, games || [], viewingGameId);
@@ -65,11 +65,15 @@ document.getElementById('btn-minimize').addEventListener('click', () => window.a
 document.getElementById('btn-close').addEventListener('click',    () => window.api?.close());
 
 document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-
-    infoModal.close();
-    playerModal.close();
-    contextMenu.hide();
+    if (e.key === 'Escape') {
+        infoModal.close();
+        playerModal.close();
+        contextMenu.hide();
+    };
+ 
+    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        window.api?.simStart();
+    };
 });
 
 window.api?.getVersion().then((v) => {
