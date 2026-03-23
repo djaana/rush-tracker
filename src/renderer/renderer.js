@@ -44,7 +44,7 @@ function refresh() {
         players.render(game.players, self);
     } else {
         const saved = (games || []).find((g) => g.id === viewingGameId);
-        if (saved) players.render(saved.players, null);
+        if (saved) players.render(saved.players.map((p) => ({ ...p, connection: true })), null);
     };
 
     history.render(game, games || [], viewingGameId);

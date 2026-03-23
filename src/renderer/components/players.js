@@ -34,12 +34,12 @@ export default class Players {
         this.#el.innerHTML = sorted.map((p) => {
             const teamClass      = p.team || 'none';
             const selfClass      = (p.self || p.username === self) ? 'self' : '';
-            const connectedClass = p.connected === true ? 'connected' : p.connected === false ? 'disconnected' : '';
+            const connectionClass = p.connection === true ? 'connected' : p.connection === false ? 'disconnected' : '';
             const crown          = best.kills > 0 && p.username === best.username ? '<span class="crown">👑</span>' : '';
             const breaker        = p.breaker ? '<span class="breaker">💥</span>' : '';
 
             return `
-                <div class="row ${connectedClass}" data-username="${p.username}">
+                <div class="row ${connectionClass}" data-username="${p.username}">
                     <img
                         class="player-head ${selfClass}"
                         src="https://mc-heads.net/avatar/${p.username}"
