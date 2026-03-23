@@ -144,15 +144,12 @@ module.exports = class Simulator {
         this.#scheduleKills(names, eventZone);
         if (mode.total > 2) this.#scheduleDisconnect(names, eventZone);
         this.#scheduleEnd(gameEnd, blue, red, winner);
-
-        this.#at(o + HUB_RETURN_MS, 'Connexion au hub');
     };
 
     async start() {
         if (this.#running) return;
         this.#running = true;
 
-        await this.#handler.reset();
         this.#sendUpdate();
 
         this.#runGame(0);
