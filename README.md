@@ -6,7 +6,7 @@
 
 <br />
 <div align="center">
-  <a href="https://github.com/disbot-development/disbot">
+  <a href="https://github.com/djaana/rush-tracker">
     <img src="app.ico" alt="Logo" width="128" height="128">
   </a>
 
