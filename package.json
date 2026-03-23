@@ -12,6 +12,7 @@
     "forceCodeSigning": false,
     "win": {
       "target": "portable",
+      "artifactName": "${productName}.exe",
       "icon": "app.ico",
       "signtoolOptions": {
         "certificateSubjectName": "Disbot Development"
