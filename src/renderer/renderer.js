@@ -44,7 +44,7 @@ function refresh() {
         players.render(game.players, self, false);
     } else {
         const saved = (games || []).find((g) => g.id === viewingGameId);
-        if (saved) players.render(saved.players.map((p) => ({ ...p, connection: true })), null, true);
+        if (saved) players.render(saved.players.map((p) => ({ ...p, connection: true })), null, true, viewingGameId);
     };
 
     history.render(game, games || [], viewingGameId);
@@ -70,7 +70,7 @@ document.addEventListener('keydown', (e) => {
         playerModal.close();
         contextMenu.hide();
     };
- 
+
     if (e.ctrlKey && e.shiftKey && e.key === 'D') {
         window.api?.simStart();
     };
