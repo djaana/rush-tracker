@@ -6,10 +6,12 @@ const Logger       = require('./Logger');
 const MAGIC = Buffer.from(process.env.STORE_MAGIC, 'hex');
 
 module.exports = class Store {
+    #logger;
     #cache;
 
     constructor() {
-        this.logger = new Logger();
+        this.#logger = new Logger();
+
         this.dir    = path.join(process.env.APPDATA, process.env.STORE_DIR);
         this.file   = path.join(this.dir, 'cache');
     };
@@ -38,7 +40,7 @@ module.exports = class Store {
         const compressed = zlib.deflateSync(Buffer.from(JSON.stringify(games), 'utf8'));
         fs.writeFileSync(this.file, Buffer.concat([MAGIC, compressed]));
 
-        this.logger.log(`cache écrit (${games.length} partie(s))`)
+        this.#logger.log(`cache écrit (${games.length} partie(s))`)
     };
 
     remove(id) {
@@ -46,6 +48,6 @@ module.exports = class Store {
         
         this.write(this.read().filter((g) => g.id !== id));
 
-        this.logger.log(`partie supprimée: ${id}`);
+        this.#logger.log(`partie supprimée: ${id}`);
     };
 };
