@@ -63,11 +63,7 @@ export default class Notifier {
 
             fill.style.transform = `scaleX(${Math.max(0, 1 - elapsed / DURATION)})`;
 
-            if (elapsed >= DURATION) {
-                dismiss();
-
-                return;
-            }
+            if (elapsed >= DURATION) return dismiss();
 
             rafId = requestAnimationFrame(tick);
         };
