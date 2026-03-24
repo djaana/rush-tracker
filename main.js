@@ -98,6 +98,10 @@ function createWindow() {
     });
 }
 
+app.commandLine.appendSwitch('disable-renderer-backgrounding');
+app.commandLine.appendSwitch('disable-background-timer-throttling');
+app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+
 app.whenReady().then(() => {
     handler = new LogHandler(store);
 
