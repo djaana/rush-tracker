@@ -148,10 +148,12 @@ export default class Players {
                 this.#updateRow(this.#rows.get(p.username), p, isBest);
             } else {
                 const entry = this.#makeRow(p, self, isBest, i * 25);
-
-                this.#el.appendChild(entry.el);
                 this.#rows.set(p.username, entry);
             };
+        });
+
+        sorted.forEach((p) => {
+            this.#el.appendChild(this.#rows.get(p.username).el);
         });
     };
 };
