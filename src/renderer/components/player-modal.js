@@ -15,7 +15,7 @@ export default class PlayerModal {
         this.#overlay.addEventListener('click', (e) => {
             if (e.target === e.currentTarget) this.close();
         });
-
+        
         document.getElementById('pm-close-btn').addEventListener('click', () => this.close());
     };
 
@@ -29,8 +29,7 @@ export default class PlayerModal {
         this.#headEl.style.opacity = '';
         this.#headEl.src           = `https://mc-heads.net/avatar/${username}`;
         this.#nameEl.textContent   = username;
-
-        this.#profileBtn.onclick = () => {
+        this.#profileBtn.onclick   = () => {
             window.api?.openExternal(`https://www.fancraft.eu/joueur?name=${username}`);
         };
 
@@ -55,8 +54,8 @@ export default class PlayerModal {
         document.getElementById('pm-kills').textContent   = rush.kills.toLocaleString('fr-FR');
         document.getElementById('pm-deaths').textContent  = rush.deaths.toLocaleString('fr-FR');
         document.getElementById('pm-ks').textContent  = rush.currentKillStreak.toLocaleString('fr-FR');
-        document.getElementById('pm-time').textContent    = fmtTime(rush.timePlayed);
-
+        document.getElementById('pm-time').textContent    = `${fmtTime(rush.timePlayed)}h`;
+        
         this.#setState('content');
     };
 

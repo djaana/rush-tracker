@@ -33,7 +33,7 @@ module.exports = class LogWatcher extends EventEmitter {
     };
 
     handleChange() {
-        const { size } = fs.statSync(this.filePath);
+        const { size }   = fs.statSync(this.filePath);
         const bufferSize = size - this.lastSize;
         const buffer     = Buffer.alloc(bufferSize);
         const fd         = fs.openSync(this.filePath, 'r');
