@@ -66,7 +66,6 @@
 }
 
 .badge.yellow { color: #f59e0b; border-color: #f59e0b; background: rgba(245,158,11,.12); }
-.badge.red    { color: var(--red); border-color: var(--red); background: var(--red-bg); }
 
 .card-bottom {
     display: flex;
