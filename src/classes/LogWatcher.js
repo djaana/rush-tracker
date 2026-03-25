@@ -1,5 +1,4 @@
 const { watchFile, unwatchFile, statSync, existsSync, openSync, readSync, closeSync } = require('fs');
-const { scheduleJob } = require('node-schedule');
 
 const EventEmitter = require('events');
 const Logger       = require('./Logger');
@@ -18,25 +17,10 @@ module.exports = class LogWatcher extends EventEmitter {
     this.lastSize       = 0;
   }
 
-  #scheduleMidnight() {
-    this.#midnightJob = scheduleJob('5 0 0 * * *', () => {
-      this.#logger.log('minuit détecté, reprise');
-
-      unwatchFile(this.filePath);
-
-      this.lastSize     = 0;
-      this.#midnightJob = null;
-
-      this.start();
-    });
-  }
-
   startWatching() {
     this.lastSize = statSync(this.filePath).size;
 
     this.#logger.log('surveillance active');
-
-    this.#scheduleMidnight();
 
     watchFile(this.filePath, { interval: 1000 }, (current, previous) => {
       if (current.ino !== previous.ino || current.size < previous.size) {
@@ -45,7 +29,7 @@ module.exports = class LogWatcher extends EventEmitter {
         this.#logger.log('fichier réinitialisé, reprise...');
 
         this.lastSize = 0;
-        this.startWatching();
+        this.start();
 
         return;
       }
