@@ -1,4 +1,4 @@
-const { readFile, writeFile, rm } = require('fs/promises');
+const { readdir, readFile, writeFile, rm } = require('fs/promises');
 const { extractAll, createPackage } = require('@electron/asar');
 const { join } = require('path');
 
@@ -10,11 +10,11 @@ async function processFile(filePath) {
 }
 
 async function walkDir(dirPath) {
-    const { readdir } = require('fs/promises');
-    const entries     = await readdir(dirPath, { withFileTypes: true });
+    const entries = await readdir(dirPath, { withFileTypes: true });
 
     await Promise.all(entries.map(async (entry) => {
         const full = join(dirPath, entry.name);
+
         if (entry.isDirectory()) return walkDir(full);
         if (/\.(js|css|html)$/.test(entry.name)) return processFile(full);
     }));
