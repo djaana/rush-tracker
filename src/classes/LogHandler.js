@@ -97,14 +97,6 @@ module.exports = class LogHandler extends EventEmitter {
         }
       },
       {
-        regex: /(\w+) a rejoint l'équipe (\w+)/u,
-        run: async ([, username, team]) => {
-          if (!this.game.lobby) return;
-
-          await this.setTeam(username, team);
-        }
-      },
-      {
         regex: /Connexion au hub/u,
         run: async () => {
           if (this.game.mode && !this.game.lobby && !this.game.spectator) return;
@@ -352,12 +344,11 @@ module.exports = class LogHandler extends EventEmitter {
     if (!team) return;
 
     const player = await this.fixPlayer(username);
-    if (!player.team || !this.game.started) {
-      player.team = team;
-      await this.fixTeams();
+    player.team = team;
+    
+    await this.fixTeams();
 
-      this.#logger.log(`équipe: ${username} → ${team}`);
-    }
+    this.#logger.log(`équipe: ${username} → ${team}`);
 
     return player;
   }
