@@ -1,0 +1,10 @@
+.toggle-state {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+}
+
+#settings-modal .modal-body {
+  gap: 6px;
+}

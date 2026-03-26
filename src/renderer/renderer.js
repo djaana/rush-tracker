@@ -1,17 +1,22 @@
-import Sidebar      from './components/sidebar.js';
-import Players      from './components/players.js';
-import History      from './components/history.js';
-import PlayerModal  from './components/player-modal.js';
-import ContextMenu  from './components/context-menu.js';
-import InfoModal    from './components/info-modal.js';
-import Notifier     from './components/notification.js';
+import Sidebar       from './components/sidebar.js';
+import Players       from './components/players.js';
+import History       from './components/history.js';
+import PlayerModal   from './components/player-modal.js';
+import ContextMenu   from './components/context-menu.js';
+import InfoModal     from './components/info-modal.js';
+import Notifier      from './components/notification.js';
+import SettingsModal from './components/settings-modal.js';
+import SearchModal   from './components/search-modal.js';
 
 let lastData      = null;
 let viewingGameId = null;
+let settings      = null;
 
-const playerModal = new PlayerModal();
-const infoModal   = new InfoModal();
-const notifier    = new Notifier();
+const playerModal   = new PlayerModal();
+const infoModal     = new InfoModal();
+const settingsModal = new SettingsModal();
+const searchModal   = new SearchModal((username) => playerModal.show(username));
+const notifier      = new Notifier(() => settings?.notifications !== false);
 
 const contextMenu = new ContextMenu(
   ()   => window.api.stopGame(),
@@ -36,6 +41,10 @@ const players = new Players(
 );
 
 const sidebar = new Sidebar(() => viewCurrent());
+
+function applyAnimations(enabled) {
+  document.body.classList.toggle('no-animations', !enabled);
+}
 
 function getEtat(game) {
   if (game.started) return 'en partie';
@@ -73,11 +82,15 @@ function selectGame(id) {
 
 document.getElementById('btn-minimize').addEventListener('click', () => window.api?.minimize());
 document.getElementById('btn-close').addEventListener('click',    () => window.api?.close());
+document.getElementById('btn-settings').addEventListener('click', () => settingsModal.open());
+document.getElementById('btn-search').addEventListener('click',   () => searchModal.open());
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     infoModal.close();
     playerModal.close();
+    settingsModal.close();
+    searchModal.close();
     contextMenu.hide();
   }
 
@@ -88,6 +101,16 @@ document.addEventListener('keydown', (e) => {
 
 window.api?.getVersion().then((v) => {
   document.getElementById('s-version').textContent = v;
+});
+
+window.api?.getSettings().then((s) => {
+  settings = s;
+  applyAnimations(s.animations);
+});
+
+window.api?.onSettingsUpdate((updated) => {
+  settings = updated;
+  applyAnimations(updated.animations);
 });
 
 if (window.api) {

@@ -1,24 +1,16 @@
 const DURATION = 5000;
 
-const MESSAGES = {
-  spectator:    { message: 'mode spectateur',             sub: null },
-  started:      { message: 'partie commencée',            sub: null },
-  saved:        { message: 'partie enregistrée',          sub: null },
-  deleted:      { message: 'partie supprimée',            sub: null },
-  lobby:        { message: 'partie détectée',             sub: null },
-  bedDestroyed: (d) => ({ message: 'lit adverse détruit', sub: d.username ? `par ${d.username}` : null }),
-};
-
 export default class Notifier {
   #container;
+  #isEnabled;
 
-  constructor() {
+  constructor(isEnabled = () => true) {
     this.#container = document.getElementById('notif-container');
+    this.#isEnabled = isEnabled;
   }
 
   push(message, sub) {
-    if (!message) return;
-
+    if (!this.#isEnabled() || !message) return;
     this.#spawn(message, sub);
   }
 
@@ -52,7 +44,7 @@ export default class Notifier {
       cancelAnimationFrame(rafId);
       el.classList.add('notif-exit');
       el.addEventListener('animationend', () => el.remove(), { once: true });
-    }
+    };
 
     const tick = (ts) => {
       if (start === null) start = ts - elapsed;
@@ -70,7 +62,6 @@ export default class Notifier {
     el.addEventListener('mouseenter', () => cancelAnimationFrame(rafId));
     el.addEventListener('mouseleave', () => {
       if (done) return;
-
       start = null;
       rafId = requestAnimationFrame(tick);
     });

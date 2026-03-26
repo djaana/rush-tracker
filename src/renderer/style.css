@@ -169,3 +169,10 @@ html, body {
 
 .status-item .key { color: var(--text-muted); text-transform: uppercase; letter-spacing: .07em; font-size: 10px; }
 .status-item .val { color: var(--text); font-weight: 600; }
+
+.no-animations *,
+.no-animations *::before,
+.no-animations *::after {
+  animation-duration: 0ms !important;
+  transition-duration: 0ms !important;
+}

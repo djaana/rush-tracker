@@ -9,9 +9,11 @@ require('dotenv').config({
 const LogWatcher  = require('./src/classes/LogWatcher');
 const LogHandler  = require('./src/classes/LogHandler');
 const Store       = require('./src/classes/Store');
+const Settings    = require('./src/classes/Settings');
 const IpcHandler  = require('./src/classes/IpcHandler');
 
 const store    = new Store();
+const settings = new Settings(join(process.env.APPDATA, process.env.STORE_DIR));
 const iconPath = app.isPackaged ? join(process.resourcesPath, 'app.ico') : join(__dirname, 'app.ico');
 const gotLock  = app.requestSingleInstanceLock();
 
@@ -36,6 +38,8 @@ function sendNotification(message, sub) {
 }
 
 function createTray() {
+  if (tray) return;
+
   const img = nativeImage.createFromPath(iconPath);
 
   tray = new Tray(img.isEmpty() ? nativeImage.createEmpty() : img);
@@ -52,6 +56,12 @@ function createTray() {
     mainWindow?.show();
     mainWindow?.focus();
   });
+}
+
+function destroyTray() {
+  if (!tray) return;
+  tray.destroy();
+  tray = null;
 }
 
 function createWindow() {
@@ -74,6 +84,7 @@ function createWindow() {
 
   mainWindow.on('close', (e) => {
     if (quit) return;
+    if (!settings.get('tray')) return app.quit();
 
     e.preventDefault();
     mainWindow.hide();
@@ -106,7 +117,8 @@ app.whenReady().then(() => {
   handler = new LogHandler(store);
 
   createWindow();
-  createTray();
+
+  if (settings.get('tray')) createTray();
 
   const watcher = new LogWatcher(join(process.env.APPDATA, process.env.LOG_SUBPATH));
 
@@ -118,12 +130,12 @@ app.whenReady().then(() => {
     sendUpdate();
   });
 
-  handler.on('game:saved',    sendUpdate);
+  handler.on('game:saved',        sendUpdate);
   handler.on('notification:push', ({ message, sub }) => sendNotification(message, sub));
 
   watcher.start();
 
-  new IpcHandler(() => mainWindow, handler, sendUpdate, store, sendNotification);
+  new IpcHandler(() => mainWindow, handler, sendUpdate, store, sendNotification, settings, { createTray, destroyTray });
 
   app.on('second-instance', () => {
     mainWindow?.show();
