@@ -1,32 +1,75 @@
-import { formatDate } from './utils.js';
+import { formatDate, addWeeks, addMonths } from './utils.js';
 
 export default class History {
   #el;
-  #cards   = new Map();
-  #isFirst = true;
+  #cards        = new Map();
+  #isFirst      = true;
+  #filterMode   = null;
+  #filterResult = null;
+  #filterDate   = null;
+  #lastGame     = null;
+  #lastGames    = [];
+  #lastViewing  = null;
 
   constructor(onSelect, onContextMenu) {
     this.#el = document.getElementById('history-cards');
 
     this.#el.addEventListener('click', (e) => {
       const card = e.target.closest('.card');
-
       if (!card) return;
-      
       const id = card.dataset.id;
-
       onSelect(id === 'current' ? 'current' : Number(id));
     });
 
     this.#el.addEventListener('contextmenu', (e) => {
       const card = e.target.closest('.card');
-
       if (!card) return;
-
       const id = card.dataset.id;
-
       onContextMenu(e, id === 'current' ? 'current' : Number(id));
     });
+
+    document.getElementById('filter-mode').addEventListener('change', (e) => {
+      this.#filterMode = e.target.value || null;
+      this.#rerender();
+    });
+
+    document.getElementById('filter-result').addEventListener('change', (e) => {
+      this.#filterResult = e.target.value || null;
+      this.#rerender();
+    });
+
+    document.getElementById('filter-date').addEventListener('change', (e) => {
+      this.#filterDate = e.target.value || null;
+      this.#rerender();
+    });
+  }
+
+  #filterGames(games) {
+    return games.filter((g) => {
+      if (this.#filterMode && g.mode?.name !== this.#filterMode) return false;
+      if (this.#filterResult && g.state !== this.#filterResult) return false;
+      if (this.#filterResult && g.mode?.name === 'spectator') return false;
+
+      if (this.#filterDate) {
+        const date = new Date(g.id);
+        const now  = new Date();
+
+        if (this.#filterDate === 'today') {
+          if (date.toDateString() !== now.toDateString()) return false;
+        } else if (this.#filterDate === 'week') {
+          if (date < date - addWeeks(date, 1)) return false;
+        } else if (this.#filterDate === 'month') {
+          if (date < date - addMonths(date, 1)) return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  #rerender() {
+    if (this.#lastGame === null) return;
+    this.#renderInternal(this.#lastGame, this.#lastGames, this.#lastViewing);
   }
 
   #buildCurrentCard(game) {
@@ -86,13 +129,21 @@ export default class History {
   }
 
   render(game, games, viewingGameId) {
+    this.#lastGame    = game;
+    this.#lastGames   = games;
+    this.#lastViewing = viewingGameId;
+    this.#renderInternal(game, games, viewingGameId);
+  }
+
+  #renderInternal(game, games, viewingGameId) {
     const isFirst = this.#isFirst;
     this.#isFirst = false;
 
+    const filteredGames = this.#filterGames(games);
+
     const incoming = new Map();
     if (game.started) incoming.set('current', game);
-
-    for (const g of games) incoming.set(String(g.id), g);
+    for (const g of filteredGames) incoming.set(String(g.id), g);
 
     for (const [id, el] of [...this.#cards]) {
       if (!incoming.has(id)) {
@@ -126,7 +177,6 @@ export default class History {
           const next = this.#cards.get(incomingKeys[j]);
           if (next) {
             anchor = next;
-            
             break;
           }
         }
@@ -134,16 +184,14 @@ export default class History {
         anchor ? this.#el.insertBefore(el, anchor) : this.#el.appendChild(el);
 
         this.#cards.set(id, el);
-
         newIdx++;
       }
     }
 
     if (!incoming.size) {
       const empty = document.createElement('div');
-      empty.className = 'history-empty';
+      empty.className  = 'history-empty';
       empty.textContent = 'aucune partie enregistrée';
-      
       this.#el.appendChild(empty);
     }
   }

@@ -62,3 +62,17 @@ export function exportGame(game) {
 
   return lines.join('\n');
 }
+
+export function addWeeks(date = Date.now(), weeks) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + (weeks * 7));
+
+  return result.getTime();
+}
+
+export function addMonths(date = Date.now(), months) {
+  const result = new Date(date);
+  result.setMonth(result.getDate() + months);
+  
+  return result.getTime();
+}
