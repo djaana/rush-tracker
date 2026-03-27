@@ -13,6 +13,18 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.removeAllListeners('settings:update');
     ipcRenderer.on('settings:update', (_e, data) => callback(data));
   },
+  onUpdateAvailable: (callback) => {
+    ipcRenderer.removeAllListeners('update:available');
+    ipcRenderer.on('update:available', (_e, data) => callback(data));
+  },
+  onDownloadProgress: (callback) => {
+    ipcRenderer.removeAllListeners('download:progress');
+    ipcRenderer.on('download:progress', (_e, data) => callback(data));
+  },
+  onUpdateError: (callback) => {
+    ipcRenderer.removeAllListeners('update:error');
+    ipcRenderer.on('update:error', () => callback());
+  },
 
   getVersion:     () => ipcRenderer.invoke('app:version'),
   openExternal:   (url) => ipcRenderer.send('shell:openExternal', url),
@@ -22,9 +34,10 @@ contextBridge.exposeInMainWorld('api', {
   minimize:       () => ipcRenderer.send('window:minimize'),
   close:          () => ipcRenderer.send('window:close'),
   fetchPlayer:    (username) => ipcRenderer.invoke('player:fetch', username),
-  searchPlayers:  (username) => ipcRenderer.invoke('players:search', username),
+  searchPlayers:  (query) => ipcRenderer.invoke('players:search', query),
   getSettings:    () => ipcRenderer.invoke('settings:get'),
   setSetting:     (key, value) => ipcRenderer.invoke('settings:set', key, value),
+  installUpdate:  (downloadUrl) => ipcRenderer.send('update:install', downloadUrl),
   simStart:       () => ipcRenderer.send('sim:start'),
   simStop:        () => ipcRenderer.send('sim:stop')
 });

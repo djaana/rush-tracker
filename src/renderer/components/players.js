@@ -67,7 +67,7 @@ export default class Players {
       name: el.querySelector('.player-name'),
       k:    el.querySelector('.stat-k'),
       d:    el.querySelector('.stat-d'),
-      kd:   el.querySelector('.stat-kd'),
+      kd:   el.querySelector('.stat-kd')
     };
   }
 

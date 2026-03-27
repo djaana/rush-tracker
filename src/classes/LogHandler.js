@@ -431,7 +431,7 @@ module.exports = class LogHandler extends EventEmitter {
       winner:    this.game.winner,
       duration:  this.game.duration,
       players:   this.game.players,
-      spectator: this.game.spectator,
+      spectator: this.game.spectator
     };
 
     const games = this.#store.read();

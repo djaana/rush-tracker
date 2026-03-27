@@ -7,6 +7,7 @@ import InfoModal     from './components/info-modal.js';
 import Notifier      from './components/notification.js';
 import SettingsModal from './components/settings-modal.js';
 import SearchModal   from './components/search-modal.js';
+import UpdateModal   from './components/update-modal.js';
 
 let lastData      = null;
 let viewingGameId = null;
@@ -15,6 +16,7 @@ let settings      = null;
 const playerModal   = new PlayerModal();
 const infoModal     = new InfoModal();
 const settingsModal = new SettingsModal();
+const updateModal   = new UpdateModal();
 const searchModal   = new SearchModal((username) => playerModal.show(username));
 const notifier      = new Notifier(() => settings?.notifications !== false);
 
@@ -91,6 +93,7 @@ document.addEventListener('keydown', (e) => {
     playerModal.close();
     settingsModal.close();
     searchModal.close();
+    updateModal.close();
     contextMenu.hide();
   }
 
@@ -111,6 +114,10 @@ window.api?.getSettings().then((s) => {
 window.api?.onSettingsUpdate((updated) => {
   settings = updated;
   applyAnimations(updated.animations);
+});
+
+window.api?.onUpdateAvailable(({ version, downloadUrl }) => {
+  updateModal.show(version, downloadUrl);
 });
 
 if (window.api) {

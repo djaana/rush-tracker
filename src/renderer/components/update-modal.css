@@ -1,0 +1,114 @@
+.upd-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0 2px;
+}
+
+.upd-version {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.upd-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: .04em;
+}
+
+#update-modal .modal-body {
+  gap: 6px;
+}
+
+#update-modal .modal-btn.install {
+  background:   #1e3a1e;
+  border-color: #2d5a2d;
+  color:        #6bcb77;
+}
+
+#update-modal .modal-btn.install:hover {
+  background:   #253f25;
+  border-color: #3a703a;
+  color:        #7dd98a;
+}
+
+#update-modal .modal-btn.ignore {
+  color: var(--text-muted);
+}
+
+#update-modal .modal-btn.ignore:hover {
+  color: var(--text-dim);
+}
+
+.upd-progress-body {
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upd-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+#upd-percent {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+#upd-eta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.upd-bar-track {
+  height: 3px;
+  background: var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.upd-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #6bcb77;
+  border-radius: 2px;
+  transition: width 200ms ease-out;
+}
+
+.no-animations .upd-bar-fill {
+  transition: none;
+}
+
+.upd-done-body {
+  padding: 32px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upd-done-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border2);
+  border-top-color: var(--text-muted);
+  border-radius: 50%;
+  animation: upd-spin .7s linear infinite;
+}
+
+@keyframes upd-spin { to { transform: rotate(360deg); } }
+
+.upd-done-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: .04em;
+}
