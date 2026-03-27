@@ -50,6 +50,7 @@ function createTray() {
 
   const menu = Menu.buildFromTemplate([{ label: 'quitter', click: () => {
     quit = true;
+    app.quit();
   }}]);
 
   tray.setContextMenu(menu);
@@ -85,7 +86,7 @@ function createWindow() {
   mainWindow.webContents.once('did-finish-load', sendUpdate);
 
   mainWindow.on('close', (e) => {
-    if (quit || updater.quit || !settings.get('tray')) return app.quit();
+    if (quit || !settings.get('tray')) return app.quit();
 
     e.preventDefault();
     mainWindow.hide();
