@@ -183,6 +183,8 @@ module.exports = class Updater extends EventEmitter {
       const child = spawn('cmd.exe', ['/c', 'start', '""', 'cmd.exe', '/c', batchPath], { detached: true, stdio: 'ignore', shell: true });
       child.unref();
 
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       app.exit(0);
     } catch (e) {
       this.emit('update:error', e);
