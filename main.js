@@ -70,7 +70,7 @@ function destroyTray() {
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 820, height: 520,
-    minWidth: 680, minHeight: 400,
+    minWidth: 820, minHeight: 520,
     frame: false,
     transparent: false,
     backgroundColor: '#1a1a1a',
