@@ -5,15 +5,20 @@ const { join, basename } = require('path');
 const { tmpdir } = require('os');
 const { spawn } = require('child_process');
 
+const Logger = require('./Logger');
+
 const EventEmitter = require('events');
 
 module.exports = class Updater extends EventEmitter {
+  #logger;
   #interval = null;
   #current;
   #iconPath;
 
   constructor(iconPath) {
     super();
+
+    this.#logger = new Logger();
 
     this.#current  = app.getVersion();
     this.#iconPath = iconPath;
@@ -127,6 +132,9 @@ module.exports = class Updater extends EventEmitter {
         body:  `mise à jour ${release.tag_name} disponible`,
         icon:  this.#iconPath
       }).show();
+
+      this.#logger.log(`mise à jour ${release.tag_name} disponible`);
+
     } catch {}
   }
 

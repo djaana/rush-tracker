@@ -1,6 +1,8 @@
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const { join, dirname } = require('path');
 
+const Logger = require('./Logger');
+
 const DEFAULTS = {
   notifications: true,
   tray:          false,
@@ -8,10 +10,13 @@ const DEFAULTS = {
 };
 
 module.exports = class Settings {
+  #logger;
   #path;
   #data;
 
   constructor(dir) {
+    this.#logger = new Logger();
+
     this.#path = join(dir, 'settings.json');
     this.#data = this.#load();
   }
@@ -32,6 +37,9 @@ module.exports = class Settings {
   set(key, value) {
     this.#data[key] = value;
     this.#save();
+
+    this.#logger.log(`paramètre modifié: ${key}: ${value}`);
+
     return { ...this.#data };
   }
 
