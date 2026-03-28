@@ -138,7 +138,8 @@ export default class Players {
       return;
     }
 
-    const incoming = new Set(sorted.map((p) => p.username));
+    const isInitial = this.#rows.size === 0;
+    const incoming  = new Set(sorted.map((p) => p.username));
 
     for (const [username, entry] of [...this.#rows]) {
       if (!incoming.has(username)) {
@@ -153,13 +154,19 @@ export default class Players {
       if (this.#rows.has(p.username)) {
         this.#updateRow(this.#rows.get(p.username), p, isBest);
       } else {
-        const entry = this.#makeRow(p, self, isBest, i * 25);
+        const delay = isInitial ? i * 25 : 0;
+        const entry = this.#makeRow(p, self, isBest, delay);
         this.#rows.set(p.username, entry);
       }
     });
 
-    sorted.forEach((p) => {
-      this.#el.appendChild(this.#rows.get(p.username).el);
-    });
+    const currentOrder = [...this.#rows.keys()];
+    const newOrder     = sorted.map((p) => p.username);
+    const sameOrder    = currentOrder.length === newOrder.length &&
+      currentOrder.every((u, i) => u === newOrder[i]);
+
+    if (!sameOrder) {
+      sorted.forEach((p) => this.#el.appendChild(this.#rows.get(p.username).el));
+    }
   }
 }
