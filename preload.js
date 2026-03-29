@@ -26,19 +26,19 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.on('update:error', () => callback());
   },
 
-  getVersion:     () => ipcRenderer.invoke('app:version'),
-  openExternal:   (url) => ipcRenderer.send('shell:openExternal', url),
+  getVersion: () => ipcRenderer.invoke('app:version'),
+  openExternal: (url) => ipcRenderer.send('shell:openExternal', url),
   openDataFolder: () => ipcRenderer.send('shell:openDataFolder'),
-  stopGame:       () => ipcRenderer.send('game:stop'),
-  deleteGame:     (id) => ipcRenderer.send('game:delete', id),
-  minimize:       () => ipcRenderer.send('window:minimize'),
-  close:          () => ipcRenderer.send('window:close'),
-  fetchPlayer:    (username) => ipcRenderer.invoke('player:fetch', username),
-  searchPlayers:  (query) => ipcRenderer.invoke('players:search', query),
-  getPlayerPage:  (username) => ipcRenderer.invoke('player:get', username),
-  getSettings:    () => ipcRenderer.invoke('settings:get'),
-  setSetting:     (key, value) => ipcRenderer.invoke('settings:set', key, value),
-  installUpdate:  (downloadUrl) => ipcRenderer.send('update:install', downloadUrl),
-  simStart:       () => ipcRenderer.send('sim:start'),
-  simStop:        () => ipcRenderer.send('sim:stop')
+  stopGame: () => ipcRenderer.send('game:stop'),
+  deleteGame: (id) => ipcRenderer.send('game:delete', id),
+  minimize: () => ipcRenderer.send('window:minimize'),
+  close: () => ipcRenderer.send('window:close'),
+  fetchPlayer: (username) => ipcRenderer.invoke('player:fetch', username),
+  searchPlayers: (query) => ipcRenderer.invoke('players:search', query),
+  getPlayerPage: (username) => ipcRenderer.invoke('player:get', username),
+  getSettings: () => ipcRenderer.invoke('settings:get'),
+  setSetting: (key, value) => ipcRenderer.invoke('settings:set', key, value),
+  installUpdate: (downloadUrl) => ipcRenderer.send('update:install', downloadUrl),
+  simStart: () => ipcRenderer.send('sim:start'),
+  simStop: () => ipcRenderer.send('sim:stop')
 });

@@ -25,7 +25,7 @@
   overflow-y: auto;
 }
 
-.srch-body::-webkit-scrollbar       { width: 3px; }
+.srch-body::-webkit-scrollbar { width: 3px; }
 .srch-body::-webkit-scrollbar-thumb { background: var(--border2); }
 
 .srch-state {

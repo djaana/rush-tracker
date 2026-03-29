@@ -31,8 +31,8 @@ let pendingUpdate = null;
 
 function sendUpdate() {
   mainWindow?.webContents.send('game:update', {
-    game:  handler.game,
-    self:  handler.self,
+    game: handler.game,
+    self: handler.self,
     games: store.read()
   });
 }
@@ -105,8 +105,8 @@ function createWindow() {
 
       new Notification({
         title: 'rush tracker',
-        body:  'le logiciel tourne toujours en arrière-plan',
-        icon:  iconPath
+        body: 'le logiciel tourne toujours en arrière-plan',
+        icon: iconPath
       }).show();
     }
   });
@@ -143,7 +143,7 @@ app.whenReady().then(() => {
     sendUpdate();
   });
 
-  handler.on('game:saved',        sendUpdate);
+  handler.on('game:saved', sendUpdate);
   handler.on('notification:push', ({ message, sub }) => sendNotification(message, sub));
 
   updater.on('update:available', ({ version, downloadUrl }) => {

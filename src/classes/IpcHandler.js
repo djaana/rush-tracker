@@ -60,11 +60,11 @@ module.exports = class IpcHandler {
 
   #register() {
     ipcMain.on('window:minimize', () => this.getWindow()?.minimize());
-    ipcMain.on('window:close',    () => this.getWindow()?.close());
+    ipcMain.on('window:close', () => this.getWindow()?.close());
 
     ipcMain.handle('app:version', () => app.getVersion());
 
-    ipcMain.on('shell:openExternal',  (_e, url) => shell.openExternal(url));
+    ipcMain.on('shell:openExternal', (_e, url) => shell.openExternal(url));
     ipcMain.on('shell:openDataFolder', () => shell.openPath(join(process.env.APPDATA, process.env.STORE_DIR)));
 
     ipcMain.on('game:stop', async () => {
@@ -79,9 +79,9 @@ module.exports = class IpcHandler {
       this.sendNotification('partie supprimée', `identifiant: ${id}`);
     });
 
-    ipcMain.handle('player:fetch',   (_e, username) => this.#fetchPlayer(username).catch(() => null));
+    ipcMain.handle('player:fetch', (_e, username) => this.#fetchPlayer(username).catch(() => null));
     ipcMain.handle('players:search', (_e, query) => this.#searchPlayers(query).catch(() => null));
-    ipcMain.handle('player:get',     (_e, username) => this.#getPlayerPage(username));
+    ipcMain.handle('player:get', (_e, username) => this.#getPlayerPage(username));
 
     ipcMain.handle('settings:get', () => this.#settings.get());
 
@@ -115,6 +115,6 @@ module.exports = class IpcHandler {
     const sim = new Simulator(this.handler, this.sendUpdate);
 
     ipcMain.on('sim:start', () => sim.start());
-    ipcMain.on('sim:stop',  () => sim.stop());
+    ipcMain.on('sim:stop', () => sim.stop());
   }
 }

@@ -33,9 +33,9 @@
   transition: background .1s;
 }
 
-.ctx-item               { color: var(--text-dim); }
-.ctx-item:hover         { background: var(--surface2); color: var(--text); }
-.ctx-item.danger:hover  { background: var(--red-bg); color: var(--red); }
+.ctx-item { color: var(--text-dim); }
+.ctx-item:hover { background: var(--surface2); color: var(--text); }
+.ctx-item.danger:hover { background: var(--red-bg); color: var(--red); }
 
 #ctx-export + .ctx-item.danger {
   margin-top: 2px;

@@ -29,9 +29,9 @@ export default class UpdateModal {
     });
 
     document.getElementById('btn-update-close').addEventListener('click', () => this.close());
-    document.getElementById('upd-ignore').addEventListener('click',       () => this.close());
-    document.getElementById('upd-install').addEventListener('click',      () => this.#startInstall());
-    document.getElementById('upd-manual').addEventListener('click',       () => {
+    document.getElementById('upd-ignore').addEventListener('click', () => this.close());
+    document.getElementById('upd-install').addEventListener('click', () => this.#startInstall());
+    document.getElementById('upd-manual').addEventListener('click', () => {
       window.api.openExternal(this.#downloadUrl);
     });
 
@@ -41,9 +41,9 @@ export default class UpdateModal {
 
   #setState(state) {
     this.#stateAvailable.style.display = state === 'available' ? '' : 'none';
-    this.#stateProgress.style.display = state === 'progress'  ? '' : 'none';
-    this.#stateDone.style.display = state === 'done'      ? '' : 'none';
-    this.#stateError.style.display = state === 'error'     ? '' : 'none';
+    this.#stateProgress.style.display = state === 'progress' ? '' : 'none';
+    this.#stateDone.style.display = state === 'done' ? '' : 'none';
+    this.#stateError.style.display = state === 'error' ? '' : 'none';
   }
 
   #onError() {

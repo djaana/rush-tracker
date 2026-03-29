@@ -1,13 +1,13 @@
-import Sidebar       from './components/sidebar.js';
-import Players       from './components/players.js';
-import History       from './components/history.js';
-import PlayerModal   from './components/player-modal.js';
-import ContextMenu   from './components/context-menu.js';
-import InfoModal     from './components/info-modal.js';
-import Notifier      from './components/notification.js';
+import Sidebar from './components/sidebar.js';
+import Players from './components/players.js';
+import History from './components/history.js';
+import PlayerModal from './components/player-modal.js';
+import ContextMenu from './components/context-menu.js';
+import InfoModal from './components/info-modal.js';
+import Notifier from './components/notification.js';
 import SettingsModal from './components/settings-modal.js';
-import SearchModal   from './components/search-modal.js';
-import UpdateModal   from './components/update-modal.js';
+import SearchModal from './components/search-modal.js';
+import UpdateModal from './components/update-modal.js';
 
 let lastData = null;
 let viewingGameId = null;
@@ -50,8 +50,8 @@ function applyAnimations(enabled) {
 
 function getEtat(game) {
   if (game.started) return 'en partie';
-  if (game.lobby)   return 'lobby';
-  if (game.mode)    return 'file d\'attente';
+  if (game.lobby) return 'lobby';
+  if (game.mode) return 'file d\'attente';
 
   return 'hub';
 }
@@ -83,9 +83,9 @@ function selectGame(id) {
 }
 
 document.getElementById('btn-minimize').addEventListener('click', () => window.api.minimize());
-document.getElementById('btn-close').addEventListener('click',    () => window.api.close());
+document.getElementById('btn-close').addEventListener('click', () => window.api.close());
 document.getElementById('btn-settings').addEventListener('click', () => settingsModal.open());
-document.getElementById('btn-search').addEventListener('click',   () => searchModal.open());
+document.getElementById('btn-search').addEventListener('click', () => searchModal.open());
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {

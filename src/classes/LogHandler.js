@@ -7,11 +7,11 @@ const STATES = { victoire: 'win', défaite: 'loose', égalité: 'draw' };
 const CHAT_FLAG = '✴';
 
 const GAMEMODES = [
-  { name: '1v1',       label: '1v1 [FAST]', total: 2  },
-  { name: '2v2',       label: '2v2 [FAST]', total: 4  },
-  { name: '4v4',       label: '4v4 [FAST]', total: 8  },
-  { name: '5v5',       label: '5v5 [MDT]',  total: 10 },
-  { name: 'spectator', label: 'Spectateur'            }
+  { name: '1v1', label: '1v1 [FAST]', total: 2 },
+  { name: '2v2', label: '2v2 [FAST]', total: 4 },
+  { name: '4v4', label: '4v4 [FAST]', total: 8 },
+  { name: '5v5', label: '5v5 [MDT]', total: 10 },
+  { name: 'spectator', label: 'Spectateur' }
 ];
 
 module.exports = class LogHandler extends EventEmitter {
@@ -205,14 +205,14 @@ module.exports = class LogHandler extends EventEmitter {
 
   #defaultGame() {
     return {
-      mode:      null,
-      lobby:     false,
-      started:   false,
+      mode: null,
+      lobby: false,
+      started: false,
       spectator: false,
-      players:   [],
-      duration:  null,
-      state:     null,
-      winner:    null
+      players: [],
+      duration: null,
+      state: null,
+      winner: null
     };
   }
 
@@ -289,11 +289,11 @@ module.exports = class LogHandler extends EventEmitter {
     if (!player) {
       player = {
         username,
-        team:       null,
-        kills:      0,
-        deaths:     0,
-        self:       this.self === username,
-        breaker:    false,
+        team: null,
+        kills: 0,
+        deaths: 0,
+        self: this.self === username,
+        breaker: false,
         connection: true
       };
 
@@ -426,11 +426,11 @@ module.exports = class LogHandler extends EventEmitter {
 
     const entry = {
       id,
-      mode:      this.game.mode,
-      state:     this.game.state,
-      winner:    this.game.winner,
-      duration:  this.game.duration,
-      players:   this.game.players,
+      mode: this.game.mode,
+      state: this.game.state,
+      winner: this.game.winner,
+      duration: this.game.duration,
+      players: this.game.players,
       spectator: this.game.spectator
     };
 

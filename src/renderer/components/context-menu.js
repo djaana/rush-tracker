@@ -33,7 +33,7 @@ export default class ContextMenu {
       this.hide();
     });
 
-    document.addEventListener('click',       () => this.hide());
+    document.addEventListener('click', () => this.hide());
     document.addEventListener('contextmenu', (e) => {
       if (!e.target.closest('.card') && !e.target.closest('.row')) this.hide();
     });
@@ -46,9 +46,9 @@ export default class ContextMenu {
     this.#isCurrent = (id === 'current');
     this.#targetId = this.#isCurrent ? null : id;
 
-    this.#stopBtn.style.display = this.#isCurrent ? ''     : 'none';
+    this.#stopBtn.style.display = this.#isCurrent ? '' : 'none';
     this.#deleteBtn.style.display = this.#isCurrent ? 'none' : '';
-    this.#exportBtn.style.display = game            ? ''     : 'none';
+    this.#exportBtn.style.display = game ? '' : 'none';
     this.#exportFn = game ? () => navigator.clipboard.writeText(exportGame(game)) : null;
 
     this.#position(e);
@@ -78,7 +78,7 @@ export default class ContextMenu {
     this.#el.classList.add('open');
 
     const rect = this.#el.getBoundingClientRect();
-    const x = Math.min(e.clientX, window.innerWidth  - rect.width  - 4);
+    const x = Math.min(e.clientX, window.innerWidth - rect.width - 4);
     const y = Math.min(e.clientY, window.innerHeight - rect.height - 4);
 
     this.#el.style.left = `${Math.max(4, x)}px`;

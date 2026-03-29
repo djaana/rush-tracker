@@ -1,11 +1,11 @@
 @keyframes card-enter {
   from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes card-exit {
   from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 0; transform: translateY(-4px); }
 }
 
 .history-panel {
@@ -45,8 +45,8 @@
   transition: border-color .1s, color .1s;
 }
 
-.filter-select:hover  { border-color: #444; color: var(--text); }
-.filter-select:focus  { border-color: #555; }
+.filter-select:hover { border-color: #444; color: var(--text); }
+.filter-select:focus { border-color: #555; }
 .filter-select option { background: #222222; color: #e0e0e0; }
 
 .history {
@@ -58,7 +58,7 @@
   gap: 6px;
 }
 
-.history::-webkit-scrollbar       { width: 3px; }
+.history::-webkit-scrollbar { width: 3px; }
 .history::-webkit-scrollbar-thumb { background: var(--border2); }
 
 .history-empty {
@@ -78,13 +78,13 @@
   transition: border-color .12s, background .12s;
 }
 
-.card:hover    { background: #272727; border-color: #444; }
+.card:hover { background: #272727; border-color: #444; }
 .card.selected { border-color: #555; background: #252525; }
-.card.current  { border-color: #444; }
+.card.current { border-color: #444; }
 .card.current.selected { border-color: #666; }
 
 .card-enter { animation: card-enter 180ms ease both; }
-.card-exit  { animation: card-exit  150ms ease both; pointer-events: none; }
+.card-exit { animation: card-exit 150ms ease both; pointer-events: none; }
 
 .card-top {
   display: flex;
@@ -94,7 +94,7 @@
 }
 
 .card-title { font-size: 12px; font-weight: 600; color: var(--text); }
-.card-date  { font-size: 10px; color: var(--text-muted); }
+.card-date { font-size: 10px; color: var(--text-muted); }
 
 .badge {
   font-size: 10px;
@@ -113,9 +113,9 @@
   justify-content: space-between;
 }
 
-.card-sub       { font-size: 11px; color: var(--text-dim); }
+.card-sub { font-size: 11px; color: var(--text-dim); }
 .card-sub.green { color: #6bcb77; }
-.card-sub.blue  { color: #6b85cb; }
-.card-sub.red   { color: #e05a5a; }
+.card-sub.blue { color: #6b85cb; }
+.card-sub.red { color: #e05a5a; }
 .card-sub.muted { color: var(--text-muted); }
-.card-time      { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.card-time { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }

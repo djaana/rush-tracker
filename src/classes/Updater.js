@@ -47,7 +47,7 @@ module.exports = class Updater extends EventEmitter {
       const req = request(url, {
         headers: {
           'User-Agent': 'rush-tracker-updater',
-          'Accept':     'application/vnd.github+json'
+          'Accept': 'application/vnd.github+json'
         }
       }, (res) => {
         if (res.statusCode === 301 || res.statusCode === 302) return resolve(this.#get(res.headers.location));
@@ -56,7 +56,7 @@ module.exports = class Updater extends EventEmitter {
         let raw = '';
 
         res.on('data', (c) => raw += c);
-        res.on('end',  () => { try { resolve(JSON.parse(raw)); } catch (e) { reject(e); } });
+        res.on('end', () => { try { resolve(JSON.parse(raw)); } catch (e) { reject(e); } });
       });
 
       req.setTimeout(10000, () => req.destroy());
@@ -129,8 +129,8 @@ module.exports = class Updater extends EventEmitter {
 
       new Notification({
         title: 'rush tracker',
-        body:  `mise à jour ${release.tag_name} disponible`,
-        icon:  this.#iconPath
+        body: `mise à jour ${release.tag_name} disponible`,
+        icon: this.#iconPath
       }).show();
 
       this.#logger.log(`mise à jour ${release.tag_name} disponible`);

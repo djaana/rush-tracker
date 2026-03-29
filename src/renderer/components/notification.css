@@ -1,11 +1,11 @@
 @keyframes notif-enter {
   from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes notif-exit {
   from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(4px); }
+  to { opacity: 0; transform: translateY(4px); }
 }
 
 .notif-container {
@@ -33,7 +33,7 @@
 }
 
 .notif-enter { animation: notif-enter 200ms ease both; }
-.notif-exit  { animation: notif-exit  160ms ease both; pointer-events: none; }
+.notif-exit { animation: notif-exit 160ms ease both; pointer-events: none; }
 
 .notif-close {
   position: absolute;
@@ -52,7 +52,7 @@
 }
 
 .notif:hover .notif-close { opacity: 1; }
-.notif-close:hover         { background: var(--border2); color: var(--text); }
+.notif-close:hover { background: var(--border2); color: var(--text); }
 
 .notif-body {
   padding-bottom: 15px;

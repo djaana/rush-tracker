@@ -53,8 +53,8 @@ export default class History {
       if (this.#filterDate) {
         const ts = g.id;
 
-        if (this.#filterDate === 'today' && ts < startOfToday())    return false;
-        if (this.#filterDate === 'week'  && ts < startOfWeekAgo())  return false;
+        if (this.#filterDate === 'today' && ts < startOfToday()) return false;
+        if (this.#filterDate === 'week' && ts < startOfWeekAgo()) return false;
         if (this.#filterDate === 'month' && ts < startOfMonthAgo()) return false;
       }
 
@@ -92,12 +92,12 @@ export default class History {
       const labels = { blue: 'bleu', red: 'rouge' };
 
       resultLabel = labels[g.winner] || '—';
-      resultClass = g.winner         || 'muted';
+      resultClass = g.winner || 'muted';
     } else {
       const labels = { win: 'victoire', loose: 'défaite', draw: 'égalité' };
       const classes = { win: 'green', loose: 'red' };
 
-      resultLabel = labels[g.state]  || 'inconnu';
+      resultLabel = labels[g.state] || 'inconnu';
       resultClass = classes[g.state] || 'muted';
     }
 

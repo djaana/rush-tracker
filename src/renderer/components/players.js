@@ -30,7 +30,7 @@ export default class Players {
 
     return [...players].sort((a, b) => {
       const td = (order[a.team] ?? 2) - (order[b.team] ?? 2);
-      if (td  !== 0) return td;
+      if (td !== 0) return td;
 
       const kdd = kdVal(b) - kdVal(a);
       if (kdd !== 0) return kdd;
@@ -65,9 +65,9 @@ export default class Players {
     return {
       el,
       name: el.querySelector('.player-name'),
-      k:    el.querySelector('.stat-k'),
-      d:    el.querySelector('.stat-d'),
-      kd:   el.querySelector('.stat-kd')
+      k: el.querySelector('.stat-k'),
+      d: el.querySelector('.stat-d'),
+      kd: el.querySelector('.stat-kd')
     };
   }
 
