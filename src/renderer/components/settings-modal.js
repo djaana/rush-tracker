@@ -10,7 +10,7 @@ export default class SettingsModal {
     });
 
     document.getElementById('btn-settings-close').addEventListener('click', () => this.close());
-    document.getElementById('st-open-data').addEventListener('click', () => window.api?.openDataFolder());
+    document.getElementById('st-open-data').addEventListener('click', () => window.api.openDataFolder());
 
     ['notifications', 'tray', 'animations'].forEach((key) => {
       document.getElementById(`st-${key}`).addEventListener('click', () => this.#toggle(key));

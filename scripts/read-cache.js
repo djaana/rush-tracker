@@ -4,7 +4,7 @@ const { resolve } = require('path');
 
 require('dotenv').config({ path: resolve(__dirname, '../.env') });
 
-const MAGIC  = Buffer.from(process.env.STORE_MAGIC, 'hex');
+const MAGIC = Buffer.from(process.env.STORE_MAGIC, 'hex');
 const source = resolve(process.argv[2]);
 const output = resolve(__dirname, 'cache.json');
 

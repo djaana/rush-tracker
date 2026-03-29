@@ -1,9 +1,9 @@
 const EventEmitter = require('events');
-const Logger       = require('./Logger');
+const Logger = require('./Logger');
 
-const TEAMS     = { bleu: 'blue', blue: 'blue', rouge: 'red', red: 'red' };
+const TEAMS = { bleu: 'blue', blue: 'blue', rouge: 'red', red: 'red' };
 const TEAM_LIST = [...new Set(Object.values(TEAMS))];
-const STATES    = { victoire: 'win', défaite: 'loose', égalité: 'draw' };
+const STATES = { victoire: 'win', défaite: 'loose', égalité: 'draw' };
 const CHAT_FLAG = '✴';
 
 const GAMEMODES = [
@@ -22,7 +22,7 @@ module.exports = class LogHandler extends EventEmitter {
     super();
 
     this.#logger = new Logger();
-    this.#store  = store;
+    this.#store = store;
 
     this.game = this.#defaultGame();
     this.self = null;

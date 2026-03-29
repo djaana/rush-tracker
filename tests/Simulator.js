@@ -8,17 +8,17 @@ const MODES = [
 ];
 
 const GAME_DURATION_MS = 7500;
-const HUB_RETURN_MS    = 10000;
+const HUB_RETURN_MS = 10000;
 const SPECTATOR_OFFSET = 11000;
 
 module.exports = class Simulator {
   #handler;
   #sendUpdate;
-  #timers  = [];
+  #timers = [];
   #running = false;
 
   constructor(handler, sendUpdate) {
-    this.#handler    = handler;
+    this.#handler = handler;
     this.#sendUpdate = sendUpdate;
   }
 
@@ -47,7 +47,7 @@ module.exports = class Simulator {
     const killCount = this.#rand(4, 8);
 
     for (let i = 0; i < killCount; i++) {
-      const kt     = this.#rand(eventZone[0], eventZone[1]);
+      const kt = this.#rand(eventZone[0], eventZone[1]);
       const victim = names[this.#rand(0, names.length - 1)];
       const others = names.filter((n) => n !== victim);
       const killer = others[this.#rand(0, others.length - 1)];
@@ -57,8 +57,8 @@ module.exports = class Simulator {
   }
 
   #scheduleDisconnect(names, eventZone) {
-    const target    = names[this.#rand(0, names.length - 1)];
-    const discTime  = this.#rand(eventZone[0], eventZone[1] - 1500);
+    const target = names[this.#rand(0, names.length - 1)];
+    const discTime = this.#rand(eventZone[0], eventZone[1] - 1500);
     const reconTime = discTime + this.#rand(800, 1200);
 
     this.#at(discTime, `[Rush] ${target} s'est déconnecté`);
@@ -69,10 +69,10 @@ module.exports = class Simulator {
   }
 
   #scheduleEnd(offset, blue, red, winner) {
-    const loser  = winner === 'Bleu' ? 'Rouge' : 'Bleu';
+    const loser = winner === 'Bleu' ? 'Rouge' : 'Bleu';
     const breaker = (winner === 'Bleu' ? blue : red)[0];
-    const state  = winner === 'Bleu' ? 'victoire' : 'défaite';
-    const secs   = Math.round(GAME_DURATION_MS / 1000);
+    const state = winner === 'Bleu' ? 'victoire' : 'défaite';
+    const secs = Math.round(GAME_DURATION_MS / 1000);
 
     this.#at(offset,       `Le lit de l'équipe ${loser} a été détruit par ${breaker}`);
     this.#at(offset + 200, `RÉSUMÉ DE LA PARTIE - ${state}`);
@@ -81,11 +81,11 @@ module.exports = class Simulator {
   }
 
   #runGame(o = 0) {
-    const mode  = MODES[Math.floor(Math.random() * MODES.length)];
+    const mode = MODES[Math.floor(Math.random() * MODES.length)];
     const names = this.#shuffle(NAMES).slice(0, mode.total);
-    const self  = names[0];
-    const blue  = names.slice(0, mode.total / 2);
-    const red   = names.slice(mode.total / 2);
+    const self = names[0];
+    const blue = names.slice(0, mode.total / 2);
+    const red = names.slice(mode.total / 2);
 
     let t = o;
 
@@ -105,10 +105,10 @@ module.exports = class Simulator {
       this.#at(t, `${name} a rejoint l'équipe Rouge`);               t += 60;
     }
 
-    const gameStart  = o + 1000;
-    const gameEnd    = o + GAME_DURATION_MS;
-    const eventZone  = [gameStart + 500, gameEnd - 600];
-    const winner     = Math.random() > 0.3 ? 'Bleu' : 'Rouge';
+    const gameStart = o + 1000;
+    const gameEnd = o + GAME_DURATION_MS;
+    const eventZone = [gameStart + 500, gameEnd - 600];
+    const winner = Math.random() > 0.3 ? 'Bleu' : 'Rouge';
 
     this.#at(gameStart, 'La partie a commencé');
 
@@ -123,10 +123,10 @@ module.exports = class Simulator {
   }
 
   #runSpectator(o = 0) {
-    const mode  = MODES[Math.floor(Math.random() * MODES.length)];
+    const mode = MODES[Math.floor(Math.random() * MODES.length)];
     const names = this.#shuffle(NAMES).slice(0, mode.total);
-    const blue  = names.slice(0, mode.total / 2);
-    const red   = names.slice(mode.total / 2);
+    const blue = names.slice(0, mode.total / 2);
+    const red = names.slice(mode.total / 2);
 
     let t = o;
 
@@ -139,9 +139,9 @@ module.exports = class Simulator {
     for (const name of blue) this.#at(t, `✴ Bleu ${name}`);
     for (const name of red)  this.#at(t, `✴ Rouge ${name}`);
 
-    const gameEnd   = o + GAME_DURATION_MS;
+    const gameEnd = o + GAME_DURATION_MS;
     const eventZone = [o + 800, gameEnd - 600];
-    const winner    = Math.random() > 0.5 ? 'Bleu' : 'Rouge';
+    const winner = Math.random() > 0.5 ? 'Bleu' : 'Rouge';
 
     this.#scheduleKills(names, eventZone);
     if (mode.total > 2) this.#scheduleDisconnect(names, eventZone);
@@ -162,7 +162,7 @@ module.exports = class Simulator {
 
   stop() {
     this.#timers.forEach(clearTimeout);
-    this.#timers  = [];
+    this.#timers = [];
     this.#running = false;
   }
 }

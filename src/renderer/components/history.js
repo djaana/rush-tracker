@@ -2,14 +2,14 @@ import { formatDate, startOfToday, startOfWeekAgo, startOfMonthAgo } from './uti
 
 export default class History {
   #el;
-  #cards        = new Map();
-  #isFirst      = true;
-  #filterMode   = null;
+  #cards = new Map();
+  #isFirst = true;
+  #filterMode = null;
   #filterResult = null;
-  #filterDate   = null;
-  #lastGame     = null;
-  #lastGames    = [];
-  #lastViewing  = null;
+  #filterDate = null;
+  #lastGame = null;
+  #lastGames = [];
+  #lastViewing = null;
 
   constructor(onSelect, onContextMenu) {
     this.#el = document.getElementById('history-cards');
@@ -91,10 +91,10 @@ export default class History {
     if (g.spectator) {
       const labels = { blue: 'bleu', red: 'rouge' };
 
-      resultLabel  = labels[g.winner] || '—';
-      resultClass  = g.winner         || 'muted';
+      resultLabel = labels[g.winner] || '—';
+      resultClass = g.winner         || 'muted';
     } else {
-      const labels  = { win: 'victoire', loose: 'défaite', draw: 'égalité' };
+      const labels = { win: 'victoire', loose: 'défaite', draw: 'égalité' };
       const classes = { win: 'green', loose: 'red' };
 
       resultLabel = labels[g.state]  || 'inconnu';
@@ -124,8 +124,8 @@ export default class History {
   }
 
   render(game, games, viewingGameId) {
-    this.#lastGame    = game;
-    this.#lastGames   = games;
+    this.#lastGame = game;
+    this.#lastGames = games;
     this.#lastViewing = viewingGameId;
     this.#renderInternal(game, games, viewingGameId, true);
   }
@@ -159,7 +159,7 @@ export default class History {
     let newIdx = 0;
 
     for (let i = 0; i < incomingKeys.length; i++) {
-      const id   = incomingKeys[i];
+      const id = incomingKeys[i];
       const data = incoming.get(id);
 
       if (this.#cards.has(id)) {
@@ -192,7 +192,7 @@ export default class History {
 
     if (!incoming.size) {
       const empty = document.createElement('div');
-      empty.className  = 'history-empty';
+      empty.className = 'history-empty';
       empty.textContent = 'aucune partie enregistrée';
       this.#el.appendChild(empty);
     }

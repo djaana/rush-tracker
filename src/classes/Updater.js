@@ -20,7 +20,7 @@ module.exports = class Updater extends EventEmitter {
 
     this.#logger = new Logger();
 
-    this.#current  = app.getVersion();
+    this.#current = app.getVersion();
     this.#iconPath = iconPath;
 
     this.quit = false;
@@ -72,10 +72,10 @@ module.exports = class Updater extends EventEmitter {
           if (res.statusCode === 301 || res.statusCode === 302) return follow(res.headers.location);
           if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode}`));
 
-          const total   = parseInt(res.headers['content-length'] || '0', 10);
-          let received  = 0;
+          const total = parseInt(res.headers['content-length'] || '0', 10);
+          let received = 0;
           let startTime = Date.now();
-          let lastEmit  = 0;
+          let lastEmit = 0;
 
           const file = createWriteStream(dest);
 
@@ -90,8 +90,8 @@ module.exports = class Updater extends EventEmitter {
             lastEmit = now;
 
             const elapsed = (now - startTime) / 1000;
-            const rate    = elapsed > 0 ? received / elapsed : 0;
-            const eta     = rate > 0 ? Math.ceil((total - received) / rate) : 0;
+            const rate = elapsed > 0 ? received / elapsed : 0;
+            const eta = rate > 0 ? Math.ceil((total - received) / rate) : 0;
 
             this.emit('download:progress', { received, total, percent: received / total, eta });
           });
@@ -141,8 +141,8 @@ module.exports = class Updater extends EventEmitter {
   async install(downloadUrl) {
     try {
       const currentExe = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
-      const newExe     = join(tmpdir(), basename(currentExe));
-      const batchPath  = join(tmpdir(), 'update.bat');
+      const newExe = join(tmpdir(), basename(currentExe));
+      const batchPath = join(tmpdir(), 'update.bat');
 
       await this.#download(downloadUrl, newExe);
 

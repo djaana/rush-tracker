@@ -30,13 +30,13 @@ export default class Notifier {
 
     this.#container.prepend(el);
 
-    const fill  = el.querySelector('.notif-bar-fill');
+    const fill = el.querySelector('.notif-bar-fill');
     const close = el.querySelector('.notif-close');
 
     let elapsed = 0;
-    let start   = null;
-    let rafId   = null;
-    let done    = false;
+    let start = null;
+    let rafId = null;
+    let done = false;
 
     const dismiss = () => {
       if (done) return;

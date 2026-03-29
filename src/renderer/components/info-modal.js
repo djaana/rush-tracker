@@ -11,10 +11,10 @@ export default class InfoModal {
     document.getElementById('btn-info').addEventListener('click',        () => this.open());
     document.getElementById('btn-modal-close').addEventListener('click', () => this.close());
     document.getElementById('link-discord').addEventListener('click',    () => {
-      window.api?.openExternal('https://discord.gg/mWF6wqARdP');
+      window.api.openExternal('https://discord.gg/mWF6wqARdP');
     });
     document.getElementById('link-github').addEventListener('click',     () => {
-      window.api?.openExternal('https://github.com/rushtracker/app');
+      window.api.openExternal('https://github.com/rushtracker/app');
     });
   }
 

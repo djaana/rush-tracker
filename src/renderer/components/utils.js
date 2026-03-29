@@ -9,7 +9,7 @@ export function fmtPoints(n) {
   if (!n) return '0';
 
   const suffixes = ['', 'K', 'M'];
-  const i        = Math.floor(Math.log(n) / Math.log(1000));
+  const i = Math.floor(Math.log(n) / Math.log(1000));
 
   return `${parseFloat((n / Math.pow(1000, i)).toFixed(1))}${suffixes[i]}`;
 }
@@ -25,9 +25,9 @@ export function formatDate(ts) {
 const TEAM_EMOJI = { blue: '🟦', red: '🟥' };
 
 export function exportPlayerLine(player, isBest) {
-  const emoji   = TEAM_EMOJI[player.team] || '❓';
-  const ratio   = kd(player.kills, player.deaths);
-  const crown   = isBest && player.kills > 0 ? ' 👑' : '';
+  const emoji = TEAM_EMOJI[player.team] || '❓';
+  const ratio = kd(player.kills, player.deaths);
+  const crown = isBest && player.kills > 0 ? ' 👑' : '';
   const breaker = player.breaker ? ' 💥' : '';
 
   return `${emoji} \`${player.username}\` ${player.kills}/${player.deaths} (${ratio})${crown}${breaker}`;
@@ -35,7 +35,7 @@ export function exportPlayerLine(player, isBest) {
 
 export function exportGame(game) {
   const players = game.players || [];
-  const best    = bestPlayer(players);
+  const best = bestPlayer(players);
 
   const lines = ['\`[rush tracker]\`'];
 
@@ -48,9 +48,9 @@ export function exportGame(game) {
 
   lines.push(`durée: ${game.duration || '—'}`);
 
-  const byKd    = (arr) => [...arr].sort((a, b) => kdVal(b) - kdVal(a));
-  const blue    = byKd(players.filter((p) => p.team === 'blue'));
-  const red     = byKd(players.filter((p) => p.team === 'red'));
+  const byKd = (arr) => [...arr].sort((a, b) => kdVal(b) - kdVal(a));
+  const blue = byKd(players.filter((p) => p.team === 'blue'));
+  const red = byKd(players.filter((p) => p.team === 'red'));
   const unknown = byKd(players.filter((p) => !p.team));
 
   for (const group of [blue, red, unknown].filter((g) => g.length)) {

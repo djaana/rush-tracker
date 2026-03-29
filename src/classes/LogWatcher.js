@@ -1,7 +1,7 @@
 const { watchFile, unwatchFile, statSync, existsSync, openSync, readSync, closeSync } = require('fs');
 
 const EventEmitter = require('events');
-const Logger       = require('./Logger');
+const Logger = require('./Logger');
 
 module.exports = class LogWatcher extends EventEmitter {
   #logger;
@@ -13,8 +13,8 @@ module.exports = class LogWatcher extends EventEmitter {
 
     this.#logger = new Logger();
 
-    this.filePath       = filePath;
-    this.lastSize       = 0;
+    this.filePath = filePath;
+    this.lastSize = 0;
   }
 
   startWatching() {
@@ -41,8 +41,8 @@ module.exports = class LogWatcher extends EventEmitter {
   handleChange() {
     const { size } = statSync(this.filePath);
     const bufferSize = size - this.lastSize;
-    const buffer     = Buffer.alloc(bufferSize);
-    const fd         = openSync(this.filePath, 'r');
+    const buffer = Buffer.alloc(bufferSize);
+    const fd = openSync(this.filePath, 'r');
 
     readSync(fd, buffer, 0, bufferSize, this.lastSize);
     closeSync(fd);

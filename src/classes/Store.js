@@ -13,8 +13,8 @@ module.exports = class Store {
   constructor() {
     this.#logger = new Logger();
 
-    this.dir    = join(process.env.APPDATA, process.env.STORE_DIR);
-    this.file   = join(this.dir, 'cache');
+    this.dir = join(process.env.APPDATA, process.env.STORE_DIR);
+    this.file = join(this.dir, 'cache');
   }
 
   read() {

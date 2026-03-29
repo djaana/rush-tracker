@@ -4,7 +4,7 @@ const { join } = require('path');
 
 async function processFile(filePath) {
   const content = await readFile(filePath, 'utf-8');
-  const result  = content.replace(/(\r?\n){2,}/g, '\n');
+  const result = content.replace(/(\r?\n){2,}/g, '\n');
 
   await writeFile(filePath, result, 'utf-8');
 }
@@ -21,7 +21,7 @@ async function walkDir(dirPath) {
 }
 
 module.exports = async ({ appOutDir }) => {
-  const asarPath    = join(appOutDir, 'resources', 'app.asar');
+  const asarPath = join(appOutDir, 'resources', 'app.asar');
   const extractPath = join(appOutDir, 'resources', 'app-minified');
 
   extractAll(asarPath, extractPath);

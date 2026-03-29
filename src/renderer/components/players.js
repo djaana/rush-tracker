@@ -2,8 +2,8 @@ import { kd, kdVal, bestPlayer } from './utils.js';
 
 export default class Players {
   #el;
-  #rows           = new Map();
-  #lastGameId     = null;
+  #rows = new Map();
+  #lastGameId = null;
   #currentPlayers = [];
 
   constructor(onPlayerClick, onPlayerContextMenu) {
@@ -25,11 +25,11 @@ export default class Players {
 
   #sort(players, self) {
     const selfTeam = players.find((p) => p.self || p.username === self)?.team;
-    const teams    = ['blue', 'red'].sort((a) => (a === selfTeam ? -1 : 1));
-    const order    = Object.fromEntries(teams.map((t, i) => [t, i]));
+    const teams = ['blue', 'red'].sort((a) => (a === selfTeam ? -1 : 1));
+    const order = Object.fromEntries(teams.map((t, i) => [t, i]));
 
     return [...players].sort((a, b) => {
-      const td  = (order[a.team] ?? 2) - (order[b.team] ?? 2);
+      const td = (order[a.team] ?? 2) - (order[b.team] ?? 2);
       if (td  !== 0) return td;
 
       const kdd = kdVal(b) - kdVal(a);
@@ -49,8 +49,8 @@ export default class Players {
     el.addEventListener('animationend', () => el.classList.remove('row-enter'), { once: true });
 
     const selfClass = (p.self || p.username === self) ? ' self' : '';
-    const crown     = isBest && p.kills > 0 ? ' <span class="crown">👑</span>' : '';
-    const breaker   = p.breaker ? ' <span class="breaker">💥</span>' : '';
+    const crown = isBest && p.kills > 0 ? ' <span class="crown">👑</span>' : '';
+    const breaker = p.breaker ? ' <span class="breaker">💥</span>' : '';
 
     el.innerHTML = `
       <img class="player-head${selfClass}" src="https://mc-heads.net/avatar/${p.username}" onerror="this.style.opacity='0'" />
@@ -74,14 +74,14 @@ export default class Players {
   #updateRow(entry, p, isBest) {
     entry.el.className = `row${p.connection === false ? ' disconnected' : ''}`;
 
-    const crown   = isBest && p.kills > 0 ? ' <span class="crown">👑</span>' : '';
+    const crown = isBest && p.kills > 0 ? ' <span class="crown">👑</span>' : '';
     const breaker = p.breaker ? ' <span class="breaker">💥</span>' : '';
 
     entry.name.className = `player-name ${p.team || 'none'}`;
     entry.name.innerHTML = `${p.username}${crown}${breaker}`;
 
-    entry.k.textContent  = p.kills;
-    entry.d.textContent  = p.deaths;
+    entry.k.textContent = p.kills;
+    entry.d.textContent = p.deaths;
     entry.kd.textContent = kd(p.kills, p.deaths);
   }
 
@@ -89,7 +89,7 @@ export default class Players {
     if (this.#el.querySelector('.empty-state')) return;
     const el = document.createElement('div');
 
-    el.className   = 'empty-state';
+    el.className = 'empty-state';
     el.textContent = 'en attente des joueurs...';
 
     this.#el.appendChild(el);
@@ -120,7 +120,7 @@ export default class Players {
     }
 
     const sorted = this.#sort(players, self);
-    const bestP  = bestPlayer(sorted);
+    const bestP = bestPlayer(sorted);
 
     this.#currentPlayers = sorted;
 
@@ -139,7 +139,7 @@ export default class Players {
     }
 
     const isInitial = this.#rows.size === 0;
-    const incoming  = new Set(sorted.map((p) => p.username));
+    const incoming = new Set(sorted.map((p) => p.username));
 
     for (const [username, entry] of [...this.#rows]) {
       if (!incoming.has(username)) {
@@ -161,8 +161,8 @@ export default class Players {
     });
 
     const currentOrder = [...this.#rows.keys()];
-    const newOrder     = sorted.map((p) => p.username);
-    const sameOrder    = currentOrder.length === newOrder.length &&
+    const newOrder = sorted.map((p) => p.username);
+    const sameOrder = currentOrder.length === newOrder.length &&
       currentOrder.every((u, i) => u === newOrder[i]);
 
     if (!sameOrder) {

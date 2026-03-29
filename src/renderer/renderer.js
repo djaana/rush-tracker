@@ -9,19 +9,19 @@ import SettingsModal from './components/settings-modal.js';
 import SearchModal   from './components/search-modal.js';
 import UpdateModal   from './components/update-modal.js';
 
-let lastData      = null;
+let lastData = null;
 let viewingGameId = null;
-let settings      = null;
+let settings = null;
 
-const playerModal   = new PlayerModal();
-const infoModal     = new InfoModal();
+const playerModal = new PlayerModal();
+const infoModal = new InfoModal();
 const settingsModal = new SettingsModal();
-const updateModal   = new UpdateModal();
-const searchModal   = new SearchModal((username) => playerModal.show(username));
-const notifier      = new Notifier(() => settings?.notifications !== false);
+const updateModal = new UpdateModal();
+const searchModal = new SearchModal((username) => playerModal.show(username));
+const notifier = new Notifier(() => settings?.notifications !== false);
 
 const contextMenu = new ContextMenu(
-  ()   => window.api.stopGame(),
+  () => window.api.stopGame(),
   (id) => {
     window.api.deleteGame(id);
     if (viewingGameId === id) viewingGameId = null;
@@ -82,8 +82,8 @@ function selectGame(id) {
   refresh();
 }
 
-document.getElementById('btn-minimize').addEventListener('click', () => window.api?.minimize());
-document.getElementById('btn-close').addEventListener('click',    () => window.api?.close());
+document.getElementById('btn-minimize').addEventListener('click', () => window.api.minimize());
+document.getElementById('btn-close').addEventListener('click',    () => window.api.close());
 document.getElementById('btn-settings').addEventListener('click', () => settingsModal.open());
 document.getElementById('btn-search').addEventListener('click',   () => searchModal.open());
 
@@ -98,25 +98,25 @@ document.addEventListener('keydown', (e) => {
   }
 
   if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-    window.api?.simStart();
+    window.api.simStart();
   }
 });
 
-window.api?.getVersion().then((v) => {
+window.api.getVersion().then((v) => {
   document.getElementById('s-version').textContent = v;
 });
 
-window.api?.getSettings().then((s) => {
+window.api.getSettings().then((s) => {
   settings = s;
   applyAnimations(s.animations);
 });
 
-window.api?.onSettingsUpdate((updated) => {
+window.api.onSettingsUpdate((updated) => {
   settings = updated;
   applyAnimations(updated.animations);
 });
 
-window.api?.onUpdateAvailable(({ version, downloadUrl }) => {
+window.api.onUpdateAvailable(({ version, downloadUrl }) => {
   updateModal.show(version, downloadUrl);
 });
 
@@ -128,8 +128,8 @@ if (window.api) {
     const games = data.games || [];
 
     document.getElementById('s-pseudo').textContent = self || '—';
-    document.getElementById('s-mode').textContent   = game.mode?.name || '—';
-    document.getElementById('s-etat').textContent   = getEtat(game);
+    document.getElementById('s-mode').textContent = game.mode?.name || '—';
+    document.getElementById('s-etat').textContent = getEtat(game);
 
     if (viewingGameId !== null && !games.some((g) => g.id === viewingGameId)) {
       viewingGameId = null;

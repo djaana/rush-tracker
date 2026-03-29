@@ -6,20 +6,20 @@ require('dotenv').config({
   quiet: true
 });
 
-const LogWatcher  = require('./src/classes/LogWatcher');
-const LogHandler  = require('./src/classes/LogHandler');
-const Store       = require('./src/classes/Store');
-const Settings    = require('./src/classes/Settings');
-const Updater     = require('./src/classes/Updater');
-const IpcHandler  = require('./src/classes/IpcHandler');
+const LogWatcher = require('./src/classes/LogWatcher');
+const LogHandler = require('./src/classes/LogHandler');
+const Store = require('./src/classes/Store');
+const Settings = require('./src/classes/Settings');
+const Updater = require('./src/classes/Updater');
+const IpcHandler = require('./src/classes/IpcHandler');
 
 const iconPath = app.isPackaged ? join(process.resourcesPath, 'app.ico') : join(__dirname, 'app.ico');
-const gotLock  = app.requestSingleInstanceLock();
+const gotLock = app.requestSingleInstanceLock();
 
-const store    = new Store();
+const store = new Store();
 const settings = new Settings(join(process.env.APPDATA, process.env.STORE_DIR));
-const handler  = new LogHandler(store);
-const updater  = new Updater(iconPath);
+const handler = new LogHandler(store);
+const updater = new Updater(iconPath);
 
 if (!gotLock) return app.quit();
 
