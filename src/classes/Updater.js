@@ -1,5 +1,4 @@
 const { app, Notification } = require('electron');
-const { request } = require('https');
 const { createWriteStream, writeFileSync } = require('fs');
 const { join, basename } = require('path');
 const { tmpdir } = require('os');
@@ -20,7 +19,7 @@ module.exports = class Updater extends EventEmitter {
 
     this.#logger = new Logger();
 
-    this.#current = app.getVersion();
+    this.#current  = app.getVersion();
     this.#iconPath = iconPath;
 
     this.quit = false;
@@ -42,78 +41,70 @@ module.exports = class Updater extends EventEmitter {
     return false;
   }
 
-  #get(url) {
-    return new Promise((resolve, reject) => {
-      const req = request(url, {
-        headers: {
-          'User-Agent': 'rush-tracker-updater',
-          'Accept': 'application/vnd.github+json'
-        }
-      }, (res) => {
-        if (res.statusCode === 301 || res.statusCode === 302) return resolve(this.#get(res.headers.location));
-        if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode}`));
-
-        let raw = '';
-
-        res.on('data', (c) => raw += c);
-        res.on('end', () => { try { resolve(JSON.parse(raw)); } catch (e) { reject(e); } });
-      });
-
-      req.setTimeout(10000, () => req.destroy());
-      req.on('error', reject);
-      req.end();
+  async #get(url) {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'rush-tracker-updater',
+        'Accept':     'application/vnd.github+json'
+      },
+      signal: AbortSignal.timeout(10000)
     });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    return res.json();
   }
 
-  #download(url, dest) {
-    return new Promise((resolve, reject) => {
-      const follow = (u) => {
-        const req = request(u, { headers: { 'User-Agent': 'rush-tracker-updater' } }, (res) => {
-          if (res.statusCode === 301 || res.statusCode === 302) return follow(res.headers.location);
-          if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode}`));
+  async #download(url, dest) {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'rush-tracker-updater' }
+    });
 
-          const total = parseInt(res.headers['content-length'] || '0', 10);
-          let received = 0;
-          let startTime = Date.now();
-          let lastEmit = 0;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-          const file = createWriteStream(dest);
+    const total     = parseInt(res.headers.get('content-length') || '0', 10);
+    let received    = 0;
+    let startTime   = Date.now();
+    let lastEmit    = 0;
 
-          res.on('data', (chunk) => {
-            received += chunk.length;
+    const file   = createWriteStream(dest);
+    const reader = res.body.getReader();
 
-            if (total <= 0) return;
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
 
-            const now = Date.now();
-            if (now - lastEmit < 100) return;
+        if (done) break;
 
+        file.write(value);
+        received += value.length;
+
+        if (total > 0) {
+          const now = Date.now();
+
+          if (now - lastEmit >= 100) {
             lastEmit = now;
 
             const elapsed = (now - startTime) / 1000;
-            const rate = elapsed > 0 ? received / elapsed : 0;
-            const eta = rate > 0 ? Math.ceil((total - received) / rate) : 0;
+            const rate    = elapsed > 0 ? received / elapsed : 0;
+            const eta     = rate > 0 ? Math.ceil((total - received) / rate) : 0;
 
             this.emit('download:progress', { received, total, percent: received / total, eta });
-          });
+          }
+        }
+      }
 
-          res.pipe(file);
+      await new Promise((resolve, reject) => {
+        file.end(resolve);
+        file.on('error', reject);
+      });
 
-          file.on('finish', () => {
-            if (total > 0) this.emit('download:progress', { received: total, total, percent: 1, eta: 0 });
+      if (total > 0) this.emit('download:progress', { received: total, total, percent: 1, eta: 0 });
 
-            file.close(resolve);
-          });
-
-          file.on('error', reject);
-        });
-
-        req.setTimeout(120000, () => req.destroy());
-        req.on('error', reject);
-        req.end();
-      };
-
-      follow(url);
-    });
+    } catch (e) {
+      file.destroy();
+      throw e;
+    }
   }
 
   async #check() {
@@ -129,8 +120,8 @@ module.exports = class Updater extends EventEmitter {
 
       new Notification({
         title: 'rush tracker',
-        body: `mise à jour ${release.tag_name} disponible`,
-        icon: this.#iconPath
+        body:  `mise à jour ${release.tag_name} disponible`,
+        icon:  this.#iconPath
       }).show();
 
       this.#logger.log(`mise à jour ${release.tag_name} disponible`);
@@ -141,8 +132,8 @@ module.exports = class Updater extends EventEmitter {
   async install(downloadUrl) {
     try {
       const currentExe = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
-      const newExe = join(tmpdir(), basename(currentExe));
-      const batchPath = join(tmpdir(), 'update.bat');
+      const newExe     = join(tmpdir(), basename(currentExe));
+      const batchPath  = join(tmpdir(), 'update.bat');
 
       await this.#download(downloadUrl, newExe);
 
@@ -190,7 +181,7 @@ module.exports = class Updater extends EventEmitter {
 
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const child = spawn('cmd.exe', ['/c', 'start', '""', 'cmd.exe', '/c', batchPath], { detached: true, stdio: 'ignore', shell: true });
+      const child = spawn('cmd.exe', ['/c', 'start', '""', 'cmd.exe', '/c', batchPath], { detached: true, stdio: 'ignore' });
       child.unref();
 
       app.exit(0);
