@@ -1,5 +1,4 @@
 const { ipcMain, shell, app } = require('electron');
-const { request } = require('https');
 const { join } = require('path');
 
 module.exports = class IpcHandler {
@@ -25,11 +24,8 @@ module.exports = class IpcHandler {
   }
 
   async #fetchPlayer(username) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-
     const res = await fetch(`https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_API_PATH}?action=player&name=${username}`, {
-      signal: controller.signal
+      signal: AbortSignal.timeout(10000)
     });
     clearTimeout(timeout);
     
@@ -40,11 +36,8 @@ module.exports = class IpcHandler {
   }
 
   async #searchPlayers(query) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-
     const res = await fetch(`https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_API_PATH}?action=players&search=${query}`, {
-      signal: controller.signal
+      signal: AbortSignal.timeout(10000)
     });
     clearTimeout(timeout);
     
