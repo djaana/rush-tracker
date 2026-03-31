@@ -2,8 +2,7 @@ export const kd = (k, d) => d === 0 ? k.toFixed(2) : (k / d).toFixed(2);
 
 export const kdVal = (p) => p.deaths === 0 ? p.kills : p.kills / p.deaths;
 
-export const bestPlayer = (players) =>
-  players?.length ? players.reduce((a, b) => kdVal(b) > kdVal(a) ? b : a) : null;
+export const bestPlayer = (players) => players?.length ? players.reduce((a, b) => kdVal(b) > kdVal(a) ? b : a) : null;
 
 export function fmtPoints(n) {
   if (!n) return '0';
