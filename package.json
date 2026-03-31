@@ -41,7 +41,7 @@
     ],
     "removePackageScripts": true
   },
-  "author": "djaaana",
+  "author": "lllab",
   "license": "GPL 3.0",
   "description": "minecraft rush statistics tracker",
   "devDependencies": {
