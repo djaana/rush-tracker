@@ -25,4 +25,4 @@ export default class InfoModal {
   close() {
     this.#overlay.classList.remove('open');
   }
-}
+};

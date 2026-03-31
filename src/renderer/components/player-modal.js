@@ -83,4 +83,4 @@ export default class PlayerModal {
   close() {
     this.#overlay.classList.remove('open');
   }
-}
+};

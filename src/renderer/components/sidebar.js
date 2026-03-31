@@ -15,4 +15,4 @@ export default class Sidebar {
   setActive(active) {
     this.#btn.classList.toggle('active', active);
   }
-}
+};

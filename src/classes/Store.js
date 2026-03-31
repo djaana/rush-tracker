@@ -51,4 +51,4 @@ module.exports = class Store {
 
     this.#logger.log(`partie supprimée: ${id}`);
   }
-}
+};

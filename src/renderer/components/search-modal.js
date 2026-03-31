@@ -91,4 +91,4 @@ export default class SearchModal {
   close() {
     this.#overlay.classList.remove('open');
   }
-}
+};

@@ -68,4 +68,4 @@ export default class Notifier {
 
     close.addEventListener('click', () => dismiss());
   }
-}
+};

@@ -462,4 +462,4 @@ module.exports = class LogHandler extends EventEmitter {
 
     return log;
   }
-}
+};

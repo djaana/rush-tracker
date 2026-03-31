@@ -92,4 +92,4 @@ module.exports = class LogWatcher extends EventEmitter {
 
     this.#logger.log('surveillance arrêtée');
   }
-}
+};

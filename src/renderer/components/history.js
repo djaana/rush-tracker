@@ -197,4 +197,4 @@ export default class History {
       this.#el.appendChild(empty);
     }
   }
-}
+};

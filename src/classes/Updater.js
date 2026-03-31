@@ -205,4 +205,4 @@ module.exports = class Updater extends EventEmitter {
   stop() {
     this.#stopInterval();
   }
-}
+};
