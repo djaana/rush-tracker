@@ -72,6 +72,8 @@ voici la liste des étapes à suivre afin d'exécuter le projet
 
 - blaye. @discord
 
+<p align="right"><a href="#readme-top">retour en haut</a></p>
+
 <p align="center"><a href="https://github.com/rushtracker/app/blob/main/LICENSE">2026 © rush tracker</a></p>
 
 [contributors-shield]: https://img.shields.io/github/contributors/rushtracker/app.svg?style=for-the-badge
