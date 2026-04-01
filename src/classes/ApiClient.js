@@ -3,13 +3,23 @@ const { networkInterfaces } = require('node:os');
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
 const { join, dirname } = require('path');
 
+const Logger = require('./Logger');
+
+const MAX_REGISTER_RETRIES = 5;
+
 module.exports = class ApiClient {
+  #logger;
+  
   #path;
   #token = null;
   #self = null;
   #heartbeatInterval = null;
+  #retryTimeout = null;
+  #retryResolve = null;
+  #destroyed = false;
 
   constructor(dir) {
+    this.#logger = new Logger();
     this.#path = join(dir, 'data.bin');
   }
 
@@ -57,6 +67,8 @@ module.exports = class ApiClient {
 
     mkdirSync(dirname(this.#path), { recursive: true });
     writeFileSync(this.#path, Buffer.concat([magic, Buffer.from(token, 'utf8')]));
+
+    this.#logger.log('token enregistré');
   }
 
   async #register() {
@@ -66,11 +78,65 @@ module.exports = class ApiClient {
       signal: AbortSignal.timeout(10000)
     });
 
-    if (!res.ok) throw new Error(`register: ${res.status}`);
+    if (!res.ok) throw new Error(`register: HTTP ${res.status}`);
 
     const { token } = await res.json();
 
     return token;
+  }
+
+  async #reauth() {
+    this.#token = await this.#register();
+    this.#write(this.#token);
+  }
+
+  async #authedFetch(url, options = {}) {
+    const build = (token) => ({
+      ...options,
+      headers: { ...options.headers, Authorization: `Bearer ${token}` }
+    });
+
+    const res = await fetch(url, build(this.#token));
+
+    if (res.status !== 401) return res;
+
+    await this.#reauth();
+
+    return fetch(url, build(this.#token));
+  }
+
+  #sleep(ms) {
+    return new Promise((resolve) => {
+      this.#retryResolve = resolve;
+      this.#retryTimeout = setTimeout(() => {
+        this.#retryTimeout = null;
+        this.#retryResolve = null;
+        resolve();
+      }, ms);
+    });
+  }
+
+  async #retryRegister(attempt = 0) {
+    try {
+      this.#token = await this.#register();
+      this.#write(this.#token);
+
+      this.#logger.log(`enregistrement réussi (tentative ${attempt + 1})`);
+    } catch (err) {
+      this.#logger.error(err);
+
+      if (this.#destroyed || attempt >= MAX_REGISTER_RETRIES) return;
+
+      const delay = Math.min(1000 * 2 ** attempt, 30_000);
+
+      this.#logger.log(`nouvel essai dans ${delay / 1000}s (${attempt + 1}/${MAX_REGISTER_RETRIES})`);
+
+      await this.#sleep(delay);
+
+      if (this.#destroyed) return;
+
+      await this.#retryRegister(attempt + 1);
+    }
   }
 
   async init() {
@@ -81,8 +147,7 @@ module.exports = class ApiClient {
       return;
     }
 
-    this.#token = await this.#register();
-    this.#write(this.#token);
+    await this.#retryRegister();
   }
 
   setSelf(username) {
@@ -106,16 +171,54 @@ module.exports = class ApiClient {
     if (!this.#self || !this.#token) return;
 
     try {
-      await fetch(`http://${process.env.API}/users/me`, {
+      await this.#authedFetch(`http://${process.env.API}/users/me`, {
         method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${this.#token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: this.#self }),
         signal: AbortSignal.timeout(5000)
       });
-    } catch {}
+    } catch (err) {
+      if (err.name === 'AbortError' || err.name === 'TimeoutError') return;
+      this.#logger.error(err);
+    }
+  }
+
+  async checkUser(username) {
+    if (!this.#token) return false;
+
+    try {
+      const res = await this.#authedFetch(
+        `http://${process.env.API}/users?username=${encodeURIComponent(username)}`,
+        { signal: AbortSignal.timeout(5000) }
+      );
+
+      if (!res.ok) return false;
+
+      const data = await res.json();
+
+      return Array.isArray(data) && data.some((u) => u.username?.toLowerCase() === username.toLowerCase());
+    } catch (err) {
+      if (err.name === 'AbortError' || err.name === 'TimeoutError') return false;
+      this.#logger.error(err);
+      return false;
+    }
+  }
+
+  destroy() {
+    this.#destroyed = true;
+
+    if (this.#retryTimeout) {
+      clearTimeout(this.#retryTimeout);
+      this.#retryTimeout = null;
+    }
+
+    this.#retryResolve?.();
+    this.#retryResolve = null;
+
+    if (this.#heartbeatInterval) {
+      clearInterval(this.#heartbeatInterval);
+      this.#heartbeatInterval = null;
+    }
   }
 
   get token() {

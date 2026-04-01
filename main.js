@@ -164,7 +164,7 @@ app.whenReady().then(async () => {
     settings,
     updater,
     { createTray, destroyTray },
-    () => apiClient.token
+    apiClient
   );
 
   app.on('second-instance', () => {

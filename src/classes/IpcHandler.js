@@ -1,14 +1,20 @@
 const { ipcMain, shell, app } = require('electron');
 const { join } = require('path');
 
+const Logger = require('./Logger');
+
 module.exports = class IpcHandler {
+  #logger;
+  
   #store;
   #settings;
   #updater;
   #tray;
-  #getToken;
+  #apiClient;
 
-  constructor(getWindow, handler, sendUpdate, store, sendNotification, settings, updater, tray, getToken) {
+  constructor(getWindow, handler, sendUpdate, store, sendNotification, settings, updater, tray, apiClient) {
+    this.#logger = new Logger();
+    
     this.getWindow = getWindow;
     this.handler = handler;
     this.sendUpdate = sendUpdate;
@@ -18,7 +24,7 @@ module.exports = class IpcHandler {
     this.#settings = settings;
     this.#updater = updater;
     this.#tray = tray;
-    this.#getToken = getToken;
+    this.#apiClient = apiClient;
 
     this.#register();
 
@@ -58,21 +64,6 @@ module.exports = class IpcHandler {
     };
   }
 
-  async #checkUser(username) {
-    const token = this.#getToken();
-    if (!token) return false;
-  
-    const res = await fetch(`http://${process.env.API}/users?username=${encodeURIComponent(username)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(5000)
-    });
-  
-    const data = await res.json();
-  
-    if (!res.ok) return false;
-    return Array.isArray(data) && data.some((u) => u.username?.toLowerCase() === username.toLowerCase());
-  }
-  
   #getPlayerPage(username) {
     return `https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_PLAYER_PATH}${username}`;
   }
@@ -98,12 +89,35 @@ module.exports = class IpcHandler {
       this.sendNotification('partie supprimée', `identifiant: ${id}`);
     });
 
-    ipcMain.handle('player:fetch', (_e, username) => this.#fetchPlayer(username).catch(() => null));
-    ipcMain.handle('player:get', (_e, username) => this.#getPlayerPage(username));
-    ipcMain.handle('player:check', (_e, username) => this.#checkUser(username).catch(() => false));
+    ipcMain.handle('player:fetch', async (_e, username) => {
+      try {
+        return await this.#fetchPlayer(username);
+      } catch (err) {
+        this.#logger.error(err);
+        return null;
+      }
+    });
 
-    ipcMain.handle('players:fetch', async () => await this.#fetchPlayers());
-    ipcMain.handle('players:search', (_e, query) => this.#searchPlayers(query).catch(() => null));
+    ipcMain.handle('player:get', (_e, username) => this.#getPlayerPage(username));
+    ipcMain.handle('player:check', (_e, username) => this.#apiClient.checkUser(username));
+
+    ipcMain.handle('players:fetch', async () => {
+      try {
+        return await this.#fetchPlayers();
+      } catch (err) {
+        this.#logger.error(err);
+        return null;
+      }
+    });
+
+    ipcMain.handle('players:search', async (_e, query) => {
+      try {
+        return await this.#searchPlayers(query);
+      } catch (err) {
+        this.#logger.error(err);
+        return null;
+      }
+    });
 
     ipcMain.handle('settings:get', () => this.#settings.get());
 
