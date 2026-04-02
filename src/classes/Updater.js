@@ -141,7 +141,7 @@ module.exports = class Updater extends EventEmitter {
 
         'echo \x1b[94m===================================\x1b[0m',
         'echo \x1b[93m   mise à jour de l\'application\x1b[0m',
-        'echo \x1b[94m==================================\x1b[0m',
+        'echo \x1b[94m===================================\x1b[0m',
         'echo.',
 
         'echo \x1b[90m[*] attente du processus...\x1b[0m',
