@@ -17,6 +17,16 @@ module.exports = class Store {
     this.file = join(this.dir, 'cache');
   }
 
+  #migrate(games) {
+    let changed = false;
+    const result = games.map((g) => {
+      if (g.state !== 'loose') return g;
+      changed = true;
+      return { ...g, state: 'loss' };
+    });
+    return { result, changed };
+  }
+
   read() {
     if (this.#cache) return this.#cache;
     try {
@@ -26,8 +36,13 @@ module.exports = class Store {
       if (buf.length < MAGIC.length || !buf.subarray(0, MAGIC.length).equals(MAGIC)) return [];
 
       const json = inflateSync(buf.subarray(MAGIC.length)).toString('utf8');
+      const games = JSON.parse(json);
+      const { result, changed } = this.#migrate(games);
 
-      return JSON.parse(json);
+      if (changed) this.write(result);
+      else this.#cache = result;
+
+      return result;
     } catch {
       return [];
     }
@@ -41,12 +56,12 @@ module.exports = class Store {
     const compressed = deflateSync(Buffer.from(JSON.stringify(games), 'utf8'));
     writeFileSync(this.file, Buffer.concat([MAGIC, compressed]));
 
-    this.#logger.log(`cache écrit (${games.length} partie(s))`)
+    this.#logger.log(`cache écrit (${games.length} partie(s))`);
   }
 
   remove(id) {
     this.#cache = null;
-    
+
     this.write(this.read().filter((g) => g.id !== id));
 
     this.#logger.log(`partie supprimée: ${id}`);
