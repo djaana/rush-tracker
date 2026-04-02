@@ -1,6 +1,6 @@
 {
   "name": "rush-tracker",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "main": "main.js",
   "scripts": {
     "start": "chcp 65001 > nul && electron .",
