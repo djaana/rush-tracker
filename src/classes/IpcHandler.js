@@ -5,7 +5,10 @@ const Logger = require('./Logger');
 
 module.exports = class IpcHandler {
   #logger;
-  
+  #getWindow;
+  #handler;
+  #sendUpdate;
+  #sendNotification;
   #store;
   #settings;
   #updater;
@@ -14,12 +17,10 @@ module.exports = class IpcHandler {
 
   constructor(getWindow, handler, sendUpdate, store, sendNotification, settings, updater, tray, apiClient) {
     this.#logger = new Logger();
-    
-    this.getWindow = getWindow;
-    this.handler = handler;
-    this.sendUpdate = sendUpdate;
-    this.sendNotification = sendNotification;
-
+    this.#getWindow = getWindow;
+    this.#handler = handler;
+    this.#sendUpdate = sendUpdate;
+    this.#sendNotification = sendNotification;
     this.#store = store;
     this.#settings = settings;
     this.#updater = updater;
@@ -31,37 +32,25 @@ module.exports = class IpcHandler {
     if (!app.isPackaged) this.#registerDev();
   }
 
-  async #fetchPlayer(username) {
-    const res = await fetch(`https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_API_PATH}?action=player&name=${username}`, {
+  async #apiFetch(params) {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetch(`https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_API_PATH}?${qs}`, {
       signal: AbortSignal.timeout(10000)
     });
 
-    return {
-      code: res.status,
-      data: await res.json()
-    };
+    return { code: res.status, data: await res.json() };
   }
 
-  async #searchPlayers(query) {
-    const res = await fetch(`https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_API_PATH}?action=players&search=${query}`, {
-      signal: AbortSignal.timeout(10000)
-    });
-
-    return {
-      code: res.status,
-      data: await res.json()
-    };
+  #fetchPlayer(username) {
+    return this.#apiFetch({ action: 'player', name: username });
   }
 
-  async #fetchPlayers() {
-    const res = await fetch(`https://${process.env.SERVER_HOSTNAME}${process.env.SERVER_API_PATH}?action=server-status`, {
-      signal: AbortSignal.timeout(10000)
-    });
+  #fetchPlayers() {
+    return this.#apiFetch({ action: 'server-status' });
+  }
 
-    return {
-      code: res.status,
-      data: await res.json()
-    };
+  #searchPlayers(query) {
+    return this.#apiFetch({ action: 'players', search: query });
   }
 
   #getPlayerPage(username) {
@@ -69,8 +58,8 @@ module.exports = class IpcHandler {
   }
 
   #register() {
-    ipcMain.on('window:minimize', () => this.getWindow()?.minimize());
-    ipcMain.on('window:close', () => this.getWindow()?.close());
+    ipcMain.on('window:minimize', () => this.#getWindow()?.minimize());
+    ipcMain.on('window:close', () => this.#getWindow()?.close());
 
     ipcMain.handle('app:version', () => app.getVersion());
 
@@ -78,15 +67,15 @@ module.exports = class IpcHandler {
     ipcMain.on('shell:openDataFolder', () => shell.openPath(join(process.env.APPDATA, process.env.STORE_DIR)));
 
     ipcMain.on('game:stop', async () => {
-      if (this.handler.game.started) await this.handler.save();
-      await this.handler.reset();
-      this.sendUpdate();
+      if (this.#handler.game.started) await this.#handler.save();
+      await this.#handler.reset();
+      this.#sendUpdate();
     });
 
     ipcMain.on('game:delete', (_e, id) => {
       this.#store.remove(id);
-      this.sendUpdate();
-      this.sendNotification('partie supprimée', `identifiant: ${id}`);
+      this.#sendUpdate();
+      this.#sendNotification('partie supprimée', `identifiant: ${id}`);
     });
 
     ipcMain.handle('player:fetch', async (_e, username) => {
@@ -126,13 +115,13 @@ module.exports = class IpcHandler {
 
       if (key === 'tray') value ? this.#tray.createTray() : this.#tray.destroyTray();
 
-      this.getWindow()?.webContents.send('settings:update', updated);
+      this.#getWindow()?.webContents.send('settings:update', updated);
 
       return updated;
     });
 
     ipcMain.on('update:install', (_e, downloadUrl) => {
-      const win = this.getWindow();
+      const win = this.#getWindow();
       const onProgress = (data) => win?.webContents.send('download:progress', data);
       const onError = () => win?.webContents.send('update:error');
 
@@ -148,7 +137,7 @@ module.exports = class IpcHandler {
 
   #registerDev() {
     const Simulator = require('../../tests/Simulator');
-    const sim = new Simulator(this.handler, this.sendUpdate);
+    const sim = new Simulator(this.#handler, this.#sendUpdate);
 
     ipcMain.on('sim:start', () => sim.start());
     ipcMain.on('sim:stop', () => sim.stop());

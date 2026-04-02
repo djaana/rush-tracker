@@ -20,8 +20,6 @@ module.exports = class Updater extends EventEmitter {
 
     this.#current  = app.getVersion();
     this.#iconPath = iconPath;
-
-    this.quit = false;
   }
 
   #parse(v) {

@@ -24,9 +24,9 @@ const updater = new Updater(iconPath);
 const apiClient = new ApiClient(join(process.env.APPDATA, process.env.STORE_DIR));
 
 let mainWindow;
-let tray;
-let quit;
-let notif;
+let tray = null;
+let quit = false;
+let notif = false;
 let pendingUpdate = null;
 
 if (!gotLock) return app.quit();

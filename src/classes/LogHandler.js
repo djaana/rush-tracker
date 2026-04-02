@@ -3,7 +3,7 @@ const Logger = require('./Logger');
 
 const TEAMS = { bleu: 'blue', blue: 'blue', rouge: 'red', red: 'red' };
 const TEAM_LIST = [...new Set(Object.values(TEAMS))];
-const STATES = { victoire: 'win', défaite: 'loose', égalité: 'draw' };
+const STATES = { victoire: 'win', défaite: 'loss', égalité: 'draw' };
 const CHAT_FLAG = '✴';
 
 const GAMEMODES = [
@@ -17,6 +17,18 @@ const GAMEMODES = [
 module.exports = class LogHandler extends EventEmitter {
   #logger;
   #store;
+  #game;
+  #self;
+  #patterns;
+  #pending;
+
+  get game() {
+    return this.#game;
+  }
+  
+  get self() {
+    return this.#self;
+  }
 
   constructor(store) {
     super();
@@ -24,10 +36,10 @@ module.exports = class LogHandler extends EventEmitter {
     this.#logger = new Logger();
     this.#store = store;
 
-    this.game = this.#defaultGame();
-    this.self = null;
+    this.#game = this.#defaultGame();
+    this.#self = null;
 
-    this.patterns = [
+    this.#patterns = [
       {
         regex: /Bonjour (\w+)/u,
         run: async ([, username]) => {
@@ -37,10 +49,10 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Hide downloading terrain/u,
         run: async () => {
-          if (!this.game.mode) return;
+          if (!this.#game.mode) return;
 
-          if (this.game.spectator) return await this.reset();
-          if (!this.game.lobby) await this.setLobby(true);
+          if (this.#game.spectator) return await this.reset();
+          if (!this.#game.lobby) await this.setLobby(true);
 
           await this.#setPending(true);
         }
@@ -48,18 +60,18 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Disconnecting/u,
         run: async () => {
-          if (!this.self || !this.game.started) return;
-          
-          await this.addDeath(this.self);
+          if (!this.#self || !this.#game.started) return;
+
+          await this.addDeath(this.#self);
         }
       },
       {
         regex: /\[Rush\] (?:\+ )?(\w+) s'est (re)?connecté/u,
         run: async ([, username]) => {
-          if (!this.game.lobby && !this.game.spectator) return;
+          if (!this.#game.lobby && !this.#game.spectator) return;
 
-          if (!this.game.started && this.pending) await this.setSelf(username);
-          if (this.game.started || this.game.spectator) return await this.setConnected(username);
+          if (!this.#game.started && this.#pending) await this.setSelf(username);
+          if (this.#game.started || this.#game.spectator) return await this.setConnected(username);
 
           await this.fixPlayer(username);
           await this.#clearPending();
@@ -68,9 +80,9 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /\[Rush\] (?:- )?(\w+) s'est déconnecté/u,
         run: async ([, username]) => {
-          if (!this.game.lobby && !this.game.spectator) return;
+          if (!this.#game.lobby && !this.#game.spectator) return;
 
-          if (this.game.started || this.game.spectator) {
+          if (this.#game.started || this.#game.spectator) {
             await this.addDeath(username);
             await this.setDisconnected(username, true);
 
@@ -107,7 +119,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Connexion au hub/u,
         run: async () => {
-          if (this.game.mode && !this.game.lobby && !this.game.spectator) return;
+          if (this.#game.mode && !this.#game.lobby && !this.#game.spectator) return;
 
           await this.reset();
         }
@@ -115,7 +127,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /La partie a commencé/u,
         run: async () => {
-          if (!this.game.lobby) return;
+          if (!this.#game.lobby) return;
 
           await this.startGame();
         }
@@ -124,7 +136,7 @@ module.exports = class LogHandler extends EventEmitter {
         regex: /(?:\[(\w+) -> (\w+)\]|(Bleu|Rouge) (\w+))/u,
         fromChat: true,
         run: async ([, privateUser, privateTeam, globalTeam, globalUser]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.setTeam(privateUser || globalUser, privateTeam || globalTeam);
         }
@@ -132,7 +144,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /⚔ (\w+) a été tué par (.+)/u,
         run: async ([, victim, killers]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.addDeath(victim);
 
@@ -144,7 +156,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Lit intermédiaire détruit par (\w+)/u,
         run: async ([, breaker]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.#setPending(breaker);
         }
@@ -152,16 +164,16 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /\+2♥ pour l'équipe (\w+)/u,
         run: async ([, team]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
-          await this.setTeam(this.pending, team);
+          await this.setTeam(this.#pending, team);
           await this.#clearPending();
         }
       },
       {
         regex: /Le lit de l'équipe (Bleu|Rouge) a été détruit par (\w+)/u,
         run: async ([, team, username]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.setTeam(username, TEAM_LIST.find((t) => t !== TEAMS[team.toLowerCase()]));
           await this.setBreaker(username);
@@ -170,7 +182,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /RÉSUMÉ DE LA PARTIE - (.+)/u,
         run: async ([, state]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.setState(state);
         }
@@ -178,7 +190,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Résultat » (ÉGALITÉ)/u,
         run: async ([, state]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.setState(state);
         }
@@ -186,7 +198,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Vainqueur » (Bleu|Rouge)/u,
         run: async ([, team]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.setWinner(team);
         }
@@ -194,7 +206,7 @@ module.exports = class LogHandler extends EventEmitter {
       {
         regex: /Durée » (\d+m \d+s)/u,
         run: async ([, duration]) => {
-          if (!this.game.started) return;
+          if (!this.#game.started) return;
 
           await this.setDuration(duration);
           await this.save();
@@ -217,17 +229,17 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   async setGameMode(name) {
-    this.game.mode = GAMEMODES.find((gm) => gm.name === name) || null;
+    this.#game.mode = GAMEMODES.find((gm) => gm.name === name) || null;
 
-    this.#logger.log(`mode: ${this.game.mode.label}`);
+    this.#logger.log(`mode: ${this.#game.mode.label}`);
 
-    return this.game.mode;
+    return this.#game.mode;
   }
 
   async setLobby(value) {
-    this.game.lobby = value;
+    this.#game.lobby = value;
 
-    if (value) this.emit('notification:push', { message: 'partie détectée', sub: this.game.mode.label });
+    if (value) this.emit('notification:push', { message: 'partie détectée', sub: this.#game.mode.label });
 
     this.#logger.log('lobby rejoint');
 
@@ -235,40 +247,40 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   async setSpectator() {
-    this.game.spectator = true;
+    this.#game.spectator = true;
 
     this.#logger.log('mode spectateur');
 
-    return this.game.mode;
+    return this.#game.mode;
   }
 
   async startGame() {
-    this.game.started = true;
+    this.#game.started = true;
 
-    if (!this.game.spectator) this.emit('notification:push', { message: 'partie commencée', sub: this.game.mode.label });
+    if (!this.#game.spectator) this.emit('notification:push', { message: 'partie commencée', sub: this.#game.mode.label });
 
     this.#logger.log('partie démarrée');
   }
 
   async setState(state) {
-    this.game.state = STATES[state.toLowerCase()] ?? null;
+    this.#game.state = STATES[state.toLowerCase()] ?? null;
 
     this.#logger.log(`résultat: ${state.toLowerCase()}`);
 
-    return this.game.state;
+    return this.#game.state;
   }
 
   async setWinner(team) {
-    this.game.winner = TEAMS[team.toLowerCase()];
+    this.#game.winner = TEAMS[team.toLowerCase()];
     await this.#checkSelfTeam();
 
-    this.#logger.log(`vainqueur: ${this.game.winner}`);
+    this.#logger.log(`vainqueur: ${this.#game.winner}`);
 
-    return this.game.winner;
+    return this.#game.winner;
   }
 
   async setDuration(duration) {
-    this.game.duration = duration;
+    this.#game.duration = duration;
 
     this.#logger.log(`durée: ${duration}`);
 
@@ -276,7 +288,7 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   async setSelf(username) {
-    this.self = username;
+    this.#self = username;
 
     this.#logger.log(`joueur identifié: ${username}`);
 
@@ -292,12 +304,12 @@ module.exports = class LogHandler extends EventEmitter {
         team: null,
         kills: 0,
         deaths: 0,
-        self: this.self === username,
+        self: this.#self === username,
         breaker: false,
         connection: true
       };
 
-      this.game.players.push(player);
+      this.#game.players.push(player);
 
       this.#logger.log(`joueur ajouté: ${username}`);
     }
@@ -308,11 +320,11 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   async removePlayer(username) {
-    this.game.players = this.game.players.filter((p) => p.username !== username);
+    this.#game.players = this.#game.players.filter((p) => p.username !== username);
 
     this.#logger.log(`joueur retiré: ${username}`);
 
-    return this.game.players;
+    return this.#game.players;
   }
 
   async setBreaker(username) {
@@ -353,7 +365,7 @@ module.exports = class LogHandler extends EventEmitter {
 
     const player = await this.fixPlayer(username);
     player.team = team;
-    
+
     await this.fixTeams();
 
     this.#logger.log(`équipe: ${username} → ${team}`);
@@ -362,15 +374,15 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   async fixTeams() {
-    if (!this.game.mode || !this.game.mode.total) return;
+    if (!this.#game.mode || !this.#game.mode.total) return;
 
-    const teamSize = this.game.mode.total / 2;
-    const fullTeam = TEAM_LIST.find((team) => this.game.players.filter((p) => p.team === team).length === teamSize);
+    const teamSize = this.#game.mode.total / 2;
+    const fullTeam = TEAM_LIST.find((team) => this.#game.players.filter((p) => p.team === team).length === teamSize);
 
     if (!fullTeam) return;
 
     const otherTeam = TEAM_LIST.find((t) => t !== fullTeam);
-    for (const player of this.game.players) {
+    for (const player of this.#game.players) {
       if (!player.team) player.team = otherTeam;
     }
   }
@@ -394,31 +406,31 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   #findPlayer(username) {
-    return this.game.players.find((p) => p.username === username);
+    return this.#game.players.find((p) => p.username === username);
   }
 
   async #checkSelfTeam() {
-    const self = this.#findPlayer(this.self);
+    const self = this.#findPlayer(this.#self);
     if (!self || self.team) return;
 
-    const team = this.game.state === STATES.victoire ? this.game.winner : TEAM_LIST.find((t) => t !== this.game.winner);
+    const team = this.#game.state === STATES.victoire ? this.#game.winner : TEAM_LIST.find((t) => t !== this.#game.winner);
     await this.setTeam(self.username, team);
   }
 
   async #setPending(value) {
-    this.pending = value;
+    this.#pending = value;
   }
 
   async #clearPending() {
-    delete this.pending;
+    this.#pending = undefined;
   }
 
   async reset() {
-    this.game = this.#defaultGame();
+    this.#game = this.#defaultGame();
 
     this.#logger.log('reset');
 
-    return this.game;
+    return this.#game;
   }
 
   async save() {
@@ -426,12 +438,12 @@ module.exports = class LogHandler extends EventEmitter {
 
     const entry = {
       id,
-      mode: this.game.mode,
-      state: this.game.state,
-      winner: this.game.winner,
-      duration: this.game.duration,
-      players: this.game.players,
-      spectator: this.game.spectator
+      mode: this.#game.mode,
+      state: this.#game.state,
+      winner: this.#game.winner,
+      duration: this.#game.duration,
+      players: this.#game.players,
+      spectator: this.#game.spectator
     };
 
     const games = this.#store.read();
@@ -449,7 +461,7 @@ module.exports = class LogHandler extends EventEmitter {
   }
 
   async parse(log) {
-    for (const pattern of this.patterns) {
+    for (const pattern of this.#patterns) {
       if ((pattern.fromChat === true) !== log.includes(CHAT_FLAG)) continue;
 
       const match = pattern.regex.exec(log);
