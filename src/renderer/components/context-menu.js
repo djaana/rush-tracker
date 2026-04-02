@@ -91,4 +91,4 @@ export default class ContextMenu {
     this.#isCurrent = false;
     this.#exportFn = null;
   }
-};
+}

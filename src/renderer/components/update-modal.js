@@ -101,4 +101,4 @@ export default class UpdateModal {
     if (!this.#canClose) return;
     this.#overlay.classList.remove('open');
   }
-};
+}

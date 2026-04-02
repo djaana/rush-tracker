@@ -20,7 +20,9 @@ async function walkDir(dirPath) {
 module.exports = async ({ appOutDir }) => {
   const asarPath = join(appOutDir, 'resources', 'app.asar');
   const extractPath = join(appOutDir, 'resources', 'app-minified');
+  
   extractAll(asarPath, extractPath);
+
   await walkDir(extractPath);
   await createPackage(extractPath, asarPath);
   await rm(extractPath, { recursive: true, force: true });
