@@ -142,11 +142,13 @@ module.exports = class LogHandler extends EventEmitter {
         }
       },
       {
-        regex: /⚔ (\w+) a été tué par (.+)/u,
+        regex: /\((\w+)\) (?:a été tué par (.+)|est mort)/u,
         run: async ([, victim, killers]) => {
           if (!this.#game.started) return;
 
           await this.addDeath(victim);
+
+          if (!killers) return;
 
           for (const killer of killers.split(',').map((k) => k.trim()).filter((k) => k !== 'le vide')) {
             await this.addKill(killer);
@@ -162,7 +164,7 @@ module.exports = class LogHandler extends EventEmitter {
         }
       },
       {
-        regex: /\+2♥ pour l'équipe (\w+)/u,
+        regex: /2♥ pour l'équipe (\w+)/u,
         run: async ([, team]) => {
           if (!this.#game.started) return;
 
