@@ -11,7 +11,7 @@ const GAMEMODES = [
   { name: '2v2', label: '2v2 [FAST]', total: 4 },
   { name: '4v4', label: '4v4 [FAST]', total: 8 },
   { name: '5v5', label: '5v5 [MDT]', total: 10 },
-  { name: 'spectator', label: 'Spectateur' }
+  { name: 'spectateur', label: 'Spectateur' }
 ];
 
 module.exports = class LogHandler extends EventEmitter {
@@ -98,7 +98,7 @@ module.exports = class LogHandler extends EventEmitter {
           await this.reset();
           await this.setSpectator();
           await this.startGame();
-          await this.setGameMode('spectator');
+          await this.setGameMode('spectateur');
           await this.fixPlayer(username);
 
           this.emit('notification:push', { message: 'mode spectateur' });
@@ -142,7 +142,7 @@ module.exports = class LogHandler extends EventEmitter {
         }
       },
       {
-        regex: /\((\w+)\) (?:a été tué par (.+)|est mort)/u,
+        regex: /(\w+) (?:a été tué par (.+)|est mort)/u,
         run: async ([, victim, killers]) => {
           if (!this.#game.started) return;
 
