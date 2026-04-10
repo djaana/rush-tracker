@@ -8,7 +8,7 @@ require('dotenv').config({
 
 const LogWatcher = require('./src/classes/LogWatcher');
 const LogHandler = require('./src/classes/LogHandler');
-const History = require('./src/classes/History');
+const HistoryManager = require('./src/classes/HistoryManager');
 const Settings = require('./src/classes/Settings');
 const Updater = require('./src/classes/Updater');
 const IpcHandler = require('./src/classes/IpcHandler');
@@ -18,7 +18,7 @@ const DebugLogger = require('./src/classes/DebugLogger');
 const iconPath = app.isPackaged ? join(process.resourcesPath, 'app.ico') : join(__dirname, 'app.ico');
 const gotLock = app.requestSingleInstanceLock();
 
-const history = new History();
+const history = new HistoryManager();
 const settings = new Settings(join(process.env.APPDATA, process.env.STORE_DIR));
 const handler = new LogHandler(history);
 const updater = new Updater(iconPath);

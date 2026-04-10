@@ -1,16 +1,15 @@
 const { createHash, createHmac } = require('node:crypto');
 const { networkInterfaces } = require('node:os');
-const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs');
-const { join, dirname } = require('path');
+const { join } = require('path');
 
 const Logger = require('./Logger');
+const BinaryStore = require('./BinaryStore');
 
 const MAX_REGISTER_RETRIES = 5;
 
 module.exports = class ApiClient {
   #logger;
-  
-  #path;
+  #store;
   #token = null;
   #self = null;
   #heartbeatInterval = null;
@@ -20,11 +19,7 @@ module.exports = class ApiClient {
 
   constructor(dir) {
     this.#logger = new Logger();
-    this.#path = join(dir, 'data.bin');
-  }
-
-  #magic() {
-    return Buffer.from(process.env.STORE_MAGIC, 'hex');
+    this.#store = new BinaryStore(join(dir, 'data.bin'));
   }
 
   #getHwid() {
@@ -52,21 +47,16 @@ module.exports = class ApiClient {
   }
 
   #read() {
-    if (!existsSync(this.#path)) return null;
-
-    const buf = readFileSync(this.#path);
-    const magic = this.#magic();
-
-    if (buf.length < magic.length || !buf.subarray(0, magic.length).equals(magic)) return null;
-
-    return buf.subarray(magic.length).toString('utf8').trim();
+    try {
+      const buf = this.#store.read();
+      return buf ? buf.toString('utf8').trim() : null;
+    } catch {
+      return null;
+    }
   }
 
   #write(token) {
-    const magic = this.#magic();
-
-    mkdirSync(dirname(this.#path), { recursive: true });
-    writeFileSync(this.#path, Buffer.concat([magic, Buffer.from(token, 'utf8')]));
+    this.#store.write(Buffer.from(token, 'utf8'));
 
     this.#logger.log('token enregistré');
   }
