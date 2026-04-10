@@ -5,8 +5,10 @@ const Logger = require('./Logger');
 
 const DEFAULTS = {
   notifications: true,
-  tray: false,
   animations: true,
+  tray: false,
+  startup: false,
+  aot: false
 };
 
 module.exports = class Settings {

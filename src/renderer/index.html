@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>rush tracker</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -19,347 +21,362 @@
   <link rel="stylesheet" href="components/update-modal.css" />
 </head>
 <body>
-
-<div class="window">
-  <div class="titlebar">
-    <div class="dot"></div>
-    <span class="title">rush tracker</span>
-    <div class="controls">
-      <button id="btn-minimize" class="minimize">—</button>
-      <button id="btn-close" class="close">✕</button>
-    </div>
-  </div>
-
-  <div class="body">
-    <div class="sidebar">
-      <button id="btn-current" title="partie actuelle">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="6" width="20" height="12" rx="2"/>
-          <path d="M6 12h4M8 10v4"/>
-          <circle cx="15.5" cy="11" r="1.5" fill="currentColor" stroke="none"/>
-          <circle cx="18.5" cy="13" r="1.5" fill="currentColor" stroke="none"/>
-        </svg>
-      </button>
-      <button id="btn-search" title="rechercher">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-      </button>
-      <div class="spacer"></div>
-      <button id="btn-info" title="informations">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="16" x2="12" y2="12"/>
-          <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
-      </button>
-      <button id="btn-settings" title="paramètres">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="main">
-      <div class="col-header">
-        <span class="ch-name">Joueur</span>
-        <span class="ch-k">K</span>
-        <span class="ch-d">D</span>
-        <span class="ch-kd">K/D</span>
-      </div>
-      <div class="rows" id="player-rows">
-        <div class="empty-state">en attente des joueurs...</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dot"></div>
+      <span class="title">rush tracker</span>
+      <div class="controls">
+        <button id="btn-minimize" class="minimize">—</button>
+        <button id="btn-close" class="close">✕</button>
       </div>
     </div>
 
-    <div class="history-panel">
-      <div class="history-filters">
-        <select id="filter-mode" class="filter-select">
-          <option value="">mode</option>
-          <option value="1v1">1v1</option>
-          <option value="2v2">2v2</option>
-          <option value="4v4">4v4</option>
-          <option value="5v5">5v5</option>
-          <option value="spectator">spectateur</option>
-        </select>
-        <select id="filter-result" class="filter-select">
-          <option value="">résultat</option>
-          <option value="win">victoire</option>
-          <option value="loss">défaite</option>
-          <option value="draw">égalité</option>
-        </select>
-        <select id="filter-date" class="filter-select">
-          <option value="">période</option>
-          <option value="today">aujourd'hui</option>
-          <option value="week">semaine</option>
-          <option value="month">mois</option>
-        </select>
+    <div class="body">
+      <div class="sidebar">
+        <button id="btn-current" title="partie actuelle">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"/>
+            <path d="M6 12h4M8 10v4"/>
+            <circle cx="15.5" cy="11" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="18.5" cy="13" r="1.5" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button id="btn-search" title="rechercher">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+        <div class="spacer"></div>
+        <button id="btn-info" title="informations">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </button>
+        <button id="btn-settings" title="paramètres">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
       </div>
-      <div class="history" id="history-cards"></div>
+
+      <div class="main">
+        <div class="col-header">
+          <span class="ch-name">Joueur</span>
+          <span class="ch-k">K</span>
+          <span class="ch-d">D</span>
+          <span class="ch-kd">K/D</span>
+        </div>
+        <div class="rows" id="player-rows">
+          <div class="empty-state">en attente des joueurs...</div>
+        </div>
+      </div>
+
+      <div class="history-panel">
+        <div class="history-filters">
+          <select id="filter-mode" class="filter-select">
+            <option value="">mode</option>
+            <option value="1v1">1v1</option>
+            <option value="2v2">2v2</option>
+            <option value="4v4">4v4</option>
+            <option value="5v5">5v5</option>
+            <option value="spectator">spectateur</option>
+          </select>
+          <select id="filter-result" class="filter-select">
+            <option value="">résultat</option>
+            <option value="win">victoire</option>
+            <option value="loss">défaite</option>
+            <option value="draw">égalité</option>
+          </select>
+          <select id="filter-date" class="filter-select">
+            <option value="">période</option>
+            <option value="today">aujourd'hui</option>
+            <option value="week">semaine</option>
+            <option value="month">mois</option>
+          </select>
+        </div>
+        <div class="history" id="history-cards"></div>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <div class="status-item">
+        <span class="key">pseudo :</span>
+        <span class="val" id="s-pseudo">—</span>
+      </div>
+      <div class="status-item">
+        <span class="key">état :</span>
+        <span class="val" id="s-etat">hub</span>
+      </div>
+      <div class="status-item">
+        <span class="key">mode :</span>
+        <span class="val" id="s-mode">—</span>
+      </div>
+      <div class="status-item">
+        <span class="key">joueurs :</span>
+        <span class="val" id="s-players">—</span>
+      </div>
+      <div class="status-item">
+        <span class="key">version :</span>
+        <span class="val" id="s-version">—</span>
+      </div>
     </div>
   </div>
 
-  <div class="statusbar">
-    <div class="status-item">
-      <span class="key">pseudo :</span>
-      <span class="val" id="s-pseudo">—</span>
-    </div>
-    <div class="status-item">
-      <span class="key">état :</span>
-      <span class="val" id="s-etat">hub</span>
-    </div>
-    <div class="status-item">
-      <span class="key">mode :</span>
-      <span class="val" id="s-mode">—</span>
-    </div>
-    <div class="status-item">
-      <span class="key">joueurs :</span>
-      <span class="val" id="s-players">—</span>
-    </div>
-    <div class="status-item">
-      <span class="key">version :</span>
-      <span class="val" id="s-version">—</span>
+  <div class="notif-container" id="notif-container"></div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span>informations</span>
+        <button id="btn-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <button class="modal-btn" id="link-discord">
+          <span>discord</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+        <button class="modal-btn" id="link-github">
+          <span>github</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-footer">2026 © rush tracker</div>
     </div>
   </div>
-</div>
 
-<div class="notif-container" id="notif-container"></div>
-
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <div class="modal-header">
-      <span>informations</span>
-      <button id="btn-modal-close">✕</button>
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span>paramètres</span>
+        <button id="btn-settings-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <button class="modal-btn" id="st-notifications">
+          <span>notifications</span>
+          <span class="toggle-state">—</span>
+        </button>
+        <button class="modal-btn" id="st-animations">
+          <span>animations</span>
+          <span class="toggle-state">—</span>
+        </button>
+        <div class="modal-divider"></div>
+        <button class="modal-btn" id="st-tray">
+          <span>zone de notification</span>
+          <span class="toggle-state">—</span>
+        </button>
+        <button class="modal-btn" id="st-startup">
+          <span>lancer au démarrage</span>
+          <span class="toggle-state">—</span>
+        </button>
+        <button class="modal-btn" id="st-aot">
+          <span>toujours au premier plan</span>
+          <span class="toggle-state">—</span>
+        </button>
+        <div class="modal-divider"></div>
+        <button class="modal-btn" id="st-debug">
+          <span>console de debug</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+        </button>
+          <button class="modal-btn" id="st-open-data">
+          <span>dossier de données</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-footer">2026 © rush tracker</div>
     </div>
-    <div class="modal-body">
-      <button class="modal-btn" id="link-discord">
-        <span>discord</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-      </button>
-      <button class="modal-btn" id="link-github">
-        <span>github</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-      </button>
-    </div>
-    <div class="modal-footer">2026 © rush tracker</div>
   </div>
-</div>
 
-<div class="modal-overlay" id="settings-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <span>paramètres</span>
-      <button id="btn-settings-close">✕</button>
+  <div class="modal-overlay" id="search-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span>rechercher</span>
+        <button id="btn-search-close">✕</button>
+      </div>
+      <div class="srch-input-wrap">
+        <input type="text" id="srch-input" class="srch-input" placeholder="nom du joueur..." autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="srch-body">
+        <div id="srch-loading" class="srch-state" style="display:none">
+          <div class="srch-spinner"></div>
+          <span>chargement...</span>
+        </div>
+        <div id="srch-empty" class="srch-state" style="display:none">aucun résultat</div>
+        <div id="srch-ratelimit" class="srch-state" style="display:none">trop de requêtes, veuillez ralentir</div>
+        <div id="srch-error" class="srch-state" style="display:none">une erreur est survenue</div>
+        <div id="srch-results"></div>
+      </div>
+      <div class="modal-footer">2026 © rush tracker</div>
     </div>
-    <div class="modal-body">
-      <button class="modal-btn" id="st-notifications">
-        <span>notifications</span>
-        <span class="toggle-state">—</span>
-      </button>
-      <button class="modal-btn" id="st-tray">
-        <span>system tray</span>
-        <span class="toggle-state">—</span>
-      </button>
-      <button class="modal-btn" id="st-animations">
-        <span>animations</span>
-        <span class="toggle-state">—</span>
-      </button>
-      <div class="modal-divider"></div>
-      <button class="modal-btn" id="st-open-data">
-        <span>dossier de données</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-        </svg>
-      </button>
-    </div>
-    <div class="modal-footer">2026 © rush tracker</div>
   </div>
-</div>
 
-<div class="modal-overlay" id="search-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <span>rechercher</span>
-      <button id="btn-search-close">✕</button>
+  <div class="modal-overlay" id="update-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span>mise à jour disponible</span>
+        <button id="btn-update-close">✕</button>
+      </div>
+
+      <div class="modal-body" id="upd-state-available">
+        <div class="upd-info">
+          <span class="upd-version" id="upd-version">—</span>
+          <span class="upd-label">est disponible</span>
+        </div>
+        <button class="modal-btn install" id="upd-install">
+          <span>installer et relancer</span>
+        </button>
+        <button class="modal-btn ignore" id="upd-ignore">
+          <span>ignorer</span>
+        </button>
+      </div>
+
+      <div class="upd-progress-body" id="upd-state-progress" style="display:none">
+        <div class="upd-progress-meta">
+          <span id="upd-percent">0%</span>
+          <span id="upd-eta">—</span>
+        </div>
+        <div class="upd-bar-track">
+          <div class="upd-bar-fill" id="upd-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="upd-done-body" id="upd-state-done" style="display:none">
+        <div class="upd-done-spinner"></div>
+        <span class="upd-done-text">redémarrage en cours...</span>
+      </div>
+
+      <div class="upd-error-body" id="upd-state-error" style="display:none">
+        <div class="upd-error-info">
+          <span class="upd-error-text">la mise à jour a échoué</span>
+          <span class="upd-error-sub">vérifiez vos permissions ou téléchargez manuellement</span>
+        </div>
+        <button class="modal-btn" id="upd-manual">
+          <span>télécharger manuellement</span>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-footer">2026 © rush tracker</div>
     </div>
-    <div class="srch-input-wrap">
-      <input type="text" id="srch-input" class="srch-input" placeholder="nom du joueur..." autocomplete="off" spellcheck="false" />
-    </div>
-    <div class="srch-body">
-      <div id="srch-loading" class="srch-state" style="display:none">
-        <div class="srch-spinner"></div>
+  </div>
+
+  <div class="modal-overlay" id="player-modal">
+    <div class="modal pm-modal">
+      <div class="pm-header">
+        <div class="pm-identity">
+          <img id="pm-head" class="pm-head" src="" alt="" onerror="this.style.opacity='0'" />
+          <span id="pm-name" class="pm-name"></span>
+        </div>
+        <button id="pm-close-btn" class="pm-close-btn">✕</button>
+      </div>
+
+      <div id="pm-loading" class="pm-loading">
+        <div class="pm-spinner"></div>
         <span>chargement...</span>
       </div>
-      <div id="srch-empty" class="srch-state" style="display:none">aucun résultat</div>
-      <div id="srch-ratelimit" class="srch-state" style="display:none">trop de requêtes, veuillez ralentir</div>
-      <div id="srch-error" class="srch-state" style="display:none">une erreur est survenue</div>
-      <div id="srch-results"></div>
+
+      <div id="pm-unknown" class="pm-error" style="display:none">
+        <span>joueur introuvable</span>
+      </div>
+
+      <div id="pm-ratelimit" class="pm-error" style="display:none">
+        <span>trop de requêtes, veuillez ralentir</span>
+      </div>
+
+      <div id="pm-error" class="pm-error" style="display:none">
+        <span>une erreur est survenue</span>
+      </div>
+
+      <div id="pm-content" class="pm-content" style="display:none">
+        <div class="pm-badges">
+          <div class="pm-badge">
+            <span class="pm-badge-label">winrate</span>
+            <span id="pm-winrate" class="pm-badge-val">—</span>
+          </div>
+          <div class="pm-badge">
+            <span class="pm-badge-label">k/d</span>
+            <span id="pm-kd" class="pm-badge-val">—</span>
+          </div>
+          <div class="pm-badge">
+            <span class="pm-badge-label">points</span>
+            <span id="pm-points" class="pm-badge-val">—</span>
+          </div>
+        </div>
+
+        <div class="pm-stats">
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">parties</span>
+            <span id="pm-played" class="pm-stat-val">—</span>
+          </div>
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">victoires</span>
+            <span id="pm-wins" class="pm-stat-val">—</span>
+          </div>
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">défaites</span>
+            <span id="pm-losses" class="pm-stat-val">—</span>
+          </div>
+          <div class="pm-stat-divider"></div>
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">kills</span>
+            <span id="pm-kills" class="pm-stat-val">—</span>
+          </div>
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">morts</span>
+            <span id="pm-deaths" class="pm-stat-val">—</span>
+          </div>
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">killstreak</span>
+            <span id="pm-ks" class="pm-stat-val">—</span>
+          </div>
+          <div class="pm-stat-divider"></div>
+          <div class="pm-stat-row">
+            <span class="pm-stat-label">temps de jeu</span>
+            <span id="pm-time" class="pm-stat-val">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pm-footer">
+        <button id="pm-profile-btn" class="pm-profile-btn">
+          voir le profil
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-footer">2026 © rush tracker</div>
     </div>
-    <div class="modal-footer">2026 © rush tracker</div>
   </div>
-</div>
 
-<div class="modal-overlay" id="update-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <span>mise à jour disponible</span>
-      <button id="btn-update-close">✕</button>
-    </div>
-
-    <div class="modal-body" id="upd-state-available">
-      <div class="upd-info">
-        <span class="upd-version" id="upd-version">—</span>
-        <span class="upd-label">est disponible</span>
-      </div>
-      <button class="modal-btn install" id="upd-install">
-        <span>installer et relancer</span>
-      </button>
-      <button class="modal-btn ignore" id="upd-ignore">
-        <span>ignorer</span>
-      </button>
-    </div>
-
-    <div class="upd-progress-body" id="upd-state-progress" style="display:none">
-      <div class="upd-progress-meta">
-        <span id="upd-percent">0%</span>
-        <span id="upd-eta">—</span>
-      </div>
-      <div class="upd-bar-track">
-        <div class="upd-bar-fill" id="upd-bar-fill"></div>
-      </div>
-    </div>
-
-    <div class="upd-done-body" id="upd-state-done" style="display:none">
-      <div class="upd-done-spinner"></div>
-      <span class="upd-done-text">redémarrage en cours...</span>
-    </div>
-
-    <div class="upd-error-body" id="upd-state-error" style="display:none">
-      <div class="upd-error-info">
-        <span class="upd-error-text">la mise à jour a échoué</span>
-        <span class="upd-error-sub">vérifiez vos permissions ou téléchargez manuellement</span>
-      </div>
-      <button class="modal-btn" id="upd-manual">
-        <span>télécharger manuellement</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="modal-footer">2026 © rush tracker</div>
+  <div class="ctx-menu" id="ctx-menu">
+    <button class="ctx-item" id="ctx-export">exporter</button>
+    <button class="ctx-item danger" id="ctx-stop">interrompre</button>
+    <button class="ctx-item danger" id="ctx-delete">supprimer</button>
   </div>
-</div>
 
-<div class="modal-overlay" id="player-modal">
-  <div class="modal pm-modal">
-    <div class="pm-header">
-      <div class="pm-identity">
-        <img id="pm-head" class="pm-head" src="" alt="" onerror="this.style.opacity='0'" />
-        <span id="pm-name" class="pm-name"></span>
-      </div>
-      <button id="pm-close-btn" class="pm-close-btn">✕</button>
-    </div>
-
-    <div id="pm-loading" class="pm-loading">
-      <div class="pm-spinner"></div>
-      <span>chargement...</span>
-    </div>
-
-    <div id="pm-unknown" class="pm-error" style="display:none">
-      <span>joueur introuvable</span>
-    </div>
-
-    <div id="pm-ratelimit" class="pm-error" style="display:none">
-      <span>trop de requêtes, veuillez ralentir</span>
-    </div>
-
-    <div id="pm-error" class="pm-error" style="display:none">
-      <span>une erreur est survenue</span>
-    </div>
-
-    <div id="pm-content" class="pm-content" style="display:none">
-      <div class="pm-badges">
-        <div class="pm-badge">
-          <span class="pm-badge-label">winrate</span>
-          <span id="pm-winrate" class="pm-badge-val">—</span>
-        </div>
-        <div class="pm-badge">
-          <span class="pm-badge-label">k/d</span>
-          <span id="pm-kd" class="pm-badge-val">—</span>
-        </div>
-        <div class="pm-badge">
-          <span class="pm-badge-label">points</span>
-          <span id="pm-points" class="pm-badge-val">—</span>
-        </div>
-      </div>
-
-      <div class="pm-stats">
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">parties</span>
-          <span id="pm-played" class="pm-stat-val">—</span>
-        </div>
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">victoires</span>
-          <span id="pm-wins" class="pm-stat-val">—</span>
-        </div>
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">défaites</span>
-          <span id="pm-losses" class="pm-stat-val">—</span>
-        </div>
-        <div class="pm-stat-divider"></div>
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">kills</span>
-          <span id="pm-kills" class="pm-stat-val">—</span>
-        </div>
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">morts</span>
-          <span id="pm-deaths" class="pm-stat-val">—</span>
-        </div>
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">killstreak</span>
-          <span id="pm-ks" class="pm-stat-val">—</span>
-        </div>
-        <div class="pm-stat-divider"></div>
-        <div class="pm-stat-row">
-          <span class="pm-stat-label">temps de jeu</span>
-          <span id="pm-time" class="pm-stat-val">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="pm-footer">
-      <button id="pm-profile-btn" class="pm-profile-btn">
-        voir le profil
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-      </button>
-    </div>
-    <div class="modal-footer">2026 © rush tracker</div>
-  </div>
-</div>
-
-<div class="ctx-menu" id="ctx-menu">
-  <button class="ctx-item" id="ctx-export">exporter</button>
-  <button class="ctx-item danger" id="ctx-stop">interrompre</button>
-  <button class="ctx-item danger" id="ctx-delete">supprimer</button>
-</div>
-
-<script type="module" src="renderer.js"></script>
+  <script type="module" src="renderer.js"></script>
 </body>
 </html>

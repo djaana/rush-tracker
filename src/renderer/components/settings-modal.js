@@ -1,6 +1,13 @@
 export default class SettingsModal {
   #overlay;
   #settings = {};
+  #keys = [
+    'notifications',
+    'animations',
+    'tray',
+    'startup',
+    'aot'
+  ]
 
   constructor() {
     this.#overlay = document.getElementById('settings-modal');
@@ -11,8 +18,9 @@ export default class SettingsModal {
 
     document.getElementById('btn-settings-close').addEventListener('click', () => this.close());
     document.getElementById('st-open-data').addEventListener('click', () => window.api.openDataFolder());
+    document.getElementById('st-debug').addEventListener('click', () => window.api.openDebug());
 
-    ['notifications', 'tray', 'animations'].forEach((key) => {
+    this.#keys.forEach((key) => {
       document.getElementById(`st-${key}`).addEventListener('click', () => this.#toggle(key));
     });
   }
@@ -24,8 +32,9 @@ export default class SettingsModal {
 
   #apply(settings) {
     this.#settings = settings;
-    ['notifications', 'tray', 'animations'].forEach((key) => {
+    this.#keys.forEach((key) => {
       const btn = document.getElementById(`st-${key}`);
+
       btn.classList.toggle('active', settings[key]);
       btn.querySelector('.toggle-state').textContent = settings[key] ? 'activé' : 'désactivé';
     });

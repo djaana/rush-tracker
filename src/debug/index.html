@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>debug console</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dot"></div>
+      <span class="title">debug console</span>
+      <div class="controls">
+        <button class="close" id="btn-close">✕</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button id="clear-btn">vider</button>
+      <span id="count">0 log</span>
+    </div>
+    <div id="log"></div>
+  </div>
+
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

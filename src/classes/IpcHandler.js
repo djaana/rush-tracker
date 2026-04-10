@@ -9,21 +9,23 @@ module.exports = class IpcHandler {
   #handler;
   #sendUpdate;
   #sendNotification;
-  #store;
+  #history;
   #settings;
   #updater;
+  #debugLogger;
   #tray;
   #apiClient;
 
-  constructor(getWindow, handler, sendUpdate, store, sendNotification, settings, updater, tray, apiClient) {
+  constructor(getWindow, handler, sendUpdate, history, sendNotification, settings, updater, debugLogger, tray, apiClient) {
     this.#logger = new Logger();
     this.#getWindow = getWindow;
     this.#handler = handler;
     this.#sendUpdate = sendUpdate;
     this.#sendNotification = sendNotification;
-    this.#store = store;
+    this.#history = history;
     this.#settings = settings;
     this.#updater = updater;
+    this.#debugLogger = debugLogger;
     this.#tray = tray;
     this.#apiClient = apiClient;
 
@@ -73,7 +75,7 @@ module.exports = class IpcHandler {
     });
 
     ipcMain.on('game:delete', (_e, id) => {
-      this.#store.remove(id);
+      this.#history.remove(id);
       this.#sendUpdate();
       this.#sendNotification('partie supprimée', `identifiant: ${id}`);
     });
@@ -114,6 +116,11 @@ module.exports = class IpcHandler {
       const updated = this.#settings.set(key, value);
 
       if (key === 'tray') value ? this.#tray.createTray() : this.#tray.destroyTray();
+      if (key === 'startup') app.setLoginItemSettings({
+        openAtLogin: value,
+        path: process.env.PORTABLE_EXECUTABLE_FILE || process.execPath
+      });
+      if (key === 'aot') this.#getWindow()?.setAlwaysOnTop(value);
 
       this.#getWindow()?.webContents.send('settings:update', updated);
 
@@ -133,6 +140,9 @@ module.exports = class IpcHandler {
         this.#updater.off('update:error', onError);
       });
     });
+
+    ipcMain.on('debug:open', () => this.#debugLogger.open());
+    ipcMain.on('debug:close', () => this.#debugLogger.close());
   }
 
   #registerDev() {

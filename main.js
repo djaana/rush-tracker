@@ -8,20 +8,24 @@ require('dotenv').config({
 
 const LogWatcher = require('./src/classes/LogWatcher');
 const LogHandler = require('./src/classes/LogHandler');
-const Store = require('./src/classes/Store');
+const History = require('./src/classes/History');
 const Settings = require('./src/classes/Settings');
 const Updater = require('./src/classes/Updater');
 const IpcHandler = require('./src/classes/IpcHandler');
 const ApiClient = require('./src/classes/ApiClient');
+const DebugLogger = require('./src/classes/DebugLogger');
 
 const iconPath = app.isPackaged ? join(process.resourcesPath, 'app.ico') : join(__dirname, 'app.ico');
 const gotLock = app.requestSingleInstanceLock();
 
-const store = new Store();
+const history = new History();
 const settings = new Settings(join(process.env.APPDATA, process.env.STORE_DIR));
-const handler = new LogHandler(store);
+const handler = new LogHandler(history);
 const updater = new Updater(iconPath);
 const apiClient = new ApiClient(join(process.env.APPDATA, process.env.STORE_DIR));
+const debugLogger = new DebugLogger(__dirname, iconPath);
+
+debugLogger.attach();
 
 let mainWindow;
 let tray = null;
@@ -41,7 +45,7 @@ function sendUpdate() {
   mainWindow?.webContents.send('game:update', {
     game: handler.game,
     self: handler.self,
-    games: store.read()
+    games: history.read()
   });
 }
 
@@ -90,6 +94,7 @@ function createWindow() {
 
   mainWindow.loadFile(join(__dirname, 'src', 'renderer', 'index.html'));
   mainWindow.webContents.once('did-finish-load', () => {
+    debugLogger.attachRenderer(mainWindow.webContents);
     sendUpdate();
 
     if (pendingUpdate) {
@@ -132,6 +137,11 @@ app.whenReady().then(async () => {
   createWindow();
 
   if (settings.get('tray')) createTray();
+  if (settings.get('startup')) app.setLoginItemSettings({
+    openAtLogin: true,
+    path: process.env.PORTABLE_EXECUTABLE_FILE || process.execPath
+  });
+  if (settings.get('aot')) mainWindow.setAlwaysOnTop(true);
 
   const watcher = new LogWatcher(join(process.env.APPDATA, process.env.LOG_SUBPATH));
   watcher.on('log:update', async (logs) => {
@@ -159,10 +169,11 @@ app.whenReady().then(async () => {
     () => mainWindow,
     handler,
     sendUpdate,
-    store,
+    history,
     sendNotification,
     settings,
     updater,
+    debugLogger,
     { createTray, destroyTray },
     apiClient
   );

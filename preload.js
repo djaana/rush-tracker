@@ -41,6 +41,7 @@ contextBridge.exposeInMainWorld('api', {
   getSettings: () => ipcRenderer.invoke('settings:get'),
   setSetting: (key, value) => ipcRenderer.invoke('settings:set', key, value),
   installUpdate: (downloadUrl) => ipcRenderer.send('update:install', downloadUrl),
+  openDebug: () => ipcRenderer.send('debug:open'),
   simStart: () => ipcRenderer.send('sim:start'),
   simStop: () => ipcRenderer.send('sim:stop')
 });
